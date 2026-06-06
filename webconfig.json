@@ -1,0 +1,14 @@
+
+
+{
+    "mongoUri": "mongodb://localhost:27017/smasys",
+    "BASEKEY": "smasys",
+    "allowedLoginRoles": [
+        "principal",
+        "vicepresident",
+        "office incharge",
+        "exam section",
+        "Accountant",
+        "Admissions cordinator"
+    ]
+}

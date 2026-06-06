@@ -1,0 +1,18 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    
+
+    {
+      "name": "Debug SMASYS API",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/dist/server.js",
+      "cwd": "${workspaceFolder}",
+      "preLaunchTask": "npm: build",
+      "outFiles": ["${workspaceFolder}/dist/**/*.js"],
+      "sourceMaps": true,
+      "skipFiles": ["<node_internals>/**"]
+    }
+  ]
+}
