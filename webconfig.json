@@ -1,3 +1,4 @@
 {
-    "authentication" : "http://localhost:3001"
+    "authentication" : "http://localhost:3001",
+    "base_url":"smsys"
 }
