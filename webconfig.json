@@ -1,3 +1,26 @@
 {
-    
+  "env": "development",
+  "frontend_origin": "xxxxx",
+  "frontend_reset_pwd_route":"http://localhost:4200/auth/reset-password",
+
+  "send_mail": "http://192.168.0.98:8080/api/send",
+  "valkey": {
+    "host": "192.168.0.135",
+    "port": 6379,
+    "username": "meds",
+    "password": "Meds#2026",
+    "keyPrefix": "meds:"
+  },
+  "postgresql_pool_config": {
+    "user": "medhub",
+    "host": "192.168.0.135",
+    "database": "meds",
+    "password": "ATPL@Med$0$6",
+    "port": 5432
+  },
+  "otp_config": {
+    "OTP_ENABLED": false,
+    "LoginTime": "120s",
+    "GLOBAL_OTP_Expiry_Time": "180s"
+  }
 }
