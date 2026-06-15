@@ -13,7 +13,6 @@ const api_res = await axios_handler({
     url:`${config?.authentication}/auth/login`
 })
 
-console.log(api_res)
 
 if(api_res?.statuscode === 200){
     return send_success(
