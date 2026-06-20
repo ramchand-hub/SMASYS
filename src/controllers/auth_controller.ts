@@ -1,33 +1,28 @@
 import { Router } from "express";
-import config from '../../webconfig.json'
-import { axios_handler } from "../utils/messages/request_handler";
+import config from "../../webconfig.json";
+import { axiosHandler } from "../utils/messages/request_handler";
 import { send_fail, send_success } from "../utils/messages/response";
-import { HTTP_STATUS } from "../utils/messages/status_code";
-import { Request,Response } from "express";
- const router = Router()
+import { Request, Response } from "express";
+import { error } from "node:console";
+const router = Router();
 
-router.post("/login", async(req:Request,res:Response)=>{
-try{
-const api_res = await axios_handler({
-    method:"POST",
-    url:`${config?.authentication}/auth/login`
-})
+router.post("/login", async (req: Request, res: Response) => {
+  try {
+    const api_res = await axiosHandler({
+      method: "POST",
+      url: `${config?.authentication}/auth/login`,
+    });
 
 
-if(api_res?.statuscode === 200){
-    return send_success(
-        res,
-        "login successfully",
-        "xxxxxxxxxx",
+    if (api_res?.statusCode === 200) {
+      return send_success(res, "login successfully", "xxxxxxxxxx");
+    }
+    else{
+        return send_success(res,'invalid',"ghjkl")
+    }
+  } catch (error: any) {
+    return send_fail(res, error.message);
+  }
+});
 
-    )
-}
-}
-
-catch(error:any){
-    return send_fail(res,error.message)
-}
-
-})
-
-export default router
+export default router;

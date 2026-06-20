@@ -1,45 +1,72 @@
-import axios from "axios"
-import logger from "./logger"
-export const axios_handler = async (config) =>{
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
+import logger from "../messages/logger";
+import { ApiRequestError } from '../messages/custom_error'
 
-    const context = {
-        method:config?.method,
-        url:config?.url
-    }
+interface ApiResponseInterface {
+  statusCode: number;
+  response: {
+    success: boolean;
+    message: string;
+    data?: any;
+  };
+}
 
-    try{
-        const response = await axios(context)
+export const axiosHandler = async (
+  config: AxiosRequestConfig,
+): Promise<ApiResponseInterface> => {
+  const context = {
+    url: config.url,
+    method: config.method?.toUpperCase() || "UNKNOWN",
+  };
 
-    }catch(error){
-        logger.info(error)      
-        if(axios.isAxiosError(error)){
+  try {
+    const response: AxiosResponse = await axios(config);
 
-            const status = error?.response?.status;
-            const data = error?.response?.data
+    logger.info("API request successful", {
+      ...context,
+      status: response.status,
+    });
 
-             if (
+    return {
+      statusCode: response.status,
+      response: response.data,
+    };
+  } catch (error) {
+   if (axios.isAxiosError(error)) {
+      const status = error.response?.status;
+      const data = error.response?.data;
+     
+    
+      if (
         error.code === "ECONNREFUSED" ||
         error.code === "ETIMEDOUT" ||
         error.code === "ECONNABORTED" ||
         error.code === "ECONNRESET"
       ) {
-        logger.error('service unavailable, please try again later...')
+        throw new ApiRequestError(
+          "Service unavailable, please try again later",
+        );
       }
+      if (error.response) {
+        logger.error("API request failed with response", {
+          ...context,
+          status,
+          data,
+        });
 
-      if(error?.response){
-        logger.error('API request was failed with response',{
-            ...context,
-            status,
-            data
-        })
-
-        return{
-            statuscode:error?.response?.status,
-            response:error?.response?.data
-        }
+    return {
+         statusCode: error.response.status,
+         response: error.response.data,
+        //  message:error.response.data.message
+         }
       }
-        }
-
-        
     }
-}
+    logger.error("Unexpected non-Axios error in axiosHandler", {
+      ...context,
+      errorMessage: error instanceof Error ? error.message : String(error),
+      errorStack: error instanceof Error ? error.stack : undefined,
+    });
+
+    throw new ApiRequestError("Unexpected error occurred");
+  }
+};
