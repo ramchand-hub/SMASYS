@@ -18,9 +18,9 @@ app.use(cors({
 app.use(express.json());
 
 
-const basePath = webconfig && webconfig.BASEKEY ? `/${webconfig.BASEKEY}` : '/api';
-console.log('Using base path:', basePath);
-app.use(basePath, mainRouter);
+// const basePath = webconfig && webconfig.BASEKEY ? `/${webconfig.BASEKEY}` : '/api';
+// console.log('Using base path:', basePath);
+app.use("/", mainRouter);
 // ✅ ADD THIS
 app.use((req, res) => {
   console.log("❌ Route not found:", req.method, req.url);
