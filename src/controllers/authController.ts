@@ -22,11 +22,9 @@ export const login = async (
     console.log("Login attempt for email:", email, "Found user:", user);
     if (!user)
       return res.status(401).json(errorResponse("Invalid credentials"));
-    const valid = await bcrypt.compare(password, user.passwordHash);
-    if (!valid)
-      return res.status(401).json(errorResponse("Invalid credentials"));
-
- 
+    // const valid = await bcrypt.compare(password, );
+    // if (!valid)
+    //   return res.status(401).json(errorResponse("Invalid credentials"));
 
     const payload: any = { id: user._id, email: user.email };
 
@@ -42,6 +40,32 @@ export const login = async (
       console.error("Failed to send login welcome email:", mailErr);
     });
   } catch (err) {
+    next(err);
+  }
+};
+
+export const register = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { name, email, password } = req.body;
+    if (!name || !email || !password)
+      return res
+        .status(400)
+        .json(errorResponse("Email and password  and name is required"));
+
+    const user = await User.create({ name, email, password });
+
+    res.json(successResponse("user registered successfully..", user?.email));
+  } catch (err: any) {
+    if (err.code === 11000) {
+      return res.status(409).json({
+        success: false,
+        message: "Email already exists",
+      });
+    }
     next(err);
   }
 };
