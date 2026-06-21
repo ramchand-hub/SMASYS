@@ -6,7 +6,16 @@ export const send_success = <T>(res:Response,message:string,data:T,statuscode=20
     res.status(statuscode).json({
         success:true,
         message,
-        data
+        data:data
+    })
+}
+
+export const invalid = <T>(res:Response,message:string,data:T,statuscode=400) => {
+
+    res.status(statuscode).json({
+        success:false,
+        message,
+        data:[]
     })
 }
 

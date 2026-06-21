@@ -17,6 +17,7 @@ export const axiosHandler = async (
   const context = {
     url: config.url,
     method: config.method?.toUpperCase() || "UNKNOWN",
+    data:config?.data
   };
 
   try {
