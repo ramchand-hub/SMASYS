@@ -4,8 +4,12 @@ import hero from "../assets/images/hero_image.png";
 import googleIcon from "../assets/images/google.png";
 import { createUser, loginUser } from "../Services/Allservice";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import Login from "./Login";
 export default function Register() {
   const dispatch = useDispatch
+  const navigate = useNavigate();
+
   const [formData, setFormData] = React.useState({
     name: "",
     email: "",
@@ -23,9 +27,10 @@ export default function Register() {
         password: formData.password,
       };
 
-      console.log("Submitting payload:", payload);
       const responseData = await createUser(payload);
-      console.log(responseData, "Response !!");
+      if(responseData && responseData?.success === true){
+        navigate("/Login")
+      }
     } catch (error) {
       console.error("Error creating user:", error);
     }
@@ -46,6 +51,7 @@ export default function Register() {
       const Response = await loginUser(payload);
       if (Response && Response.success === true) {
         localStorage.setItem("token", Response.token);
+
       }
     } catch (error) {
       console.error("Error logging in user:", error);
