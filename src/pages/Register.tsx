@@ -5,9 +5,8 @@ import googleIcon from "../assets/images/google.png";
 import { createUser, loginUser } from "../Services/Allservice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import Login from "./Login";
 export default function Register() {
-  const dispatch = useDispatch
+  const dispatch = useDispatch;
   const navigate = useNavigate();
 
   const [formData, setFormData] = React.useState({
@@ -28,8 +27,8 @@ export default function Register() {
       };
 
       const responseData = await createUser(payload);
-      if(responseData && responseData?.success === true){
-        navigate("/Login")
+      if (responseData && responseData?.success === true) {
+        setIsLogin(!isLogin);
       }
     } catch (error) {
       console.error("Error creating user:", error);
@@ -51,7 +50,7 @@ export default function Register() {
       const Response = await loginUser(payload);
       if (Response && Response.success === true) {
         localStorage.setItem("token", Response.token);
-
+        navigate("/Dashboard");
       }
     } catch (error) {
       console.error("Error logging in user:", error);
