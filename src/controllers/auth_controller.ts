@@ -6,11 +6,8 @@ import { Request, Response } from "express";
 import logger from "../utils/messages/logger";
 const router = Router();
 
-
-
 router.post("/register", async (req: Request, res: Response) => {
   try {
-
     const result = req.body;
 
     const api_res = await axiosHandler({
@@ -19,12 +16,11 @@ router.post("/register", async (req: Request, res: Response) => {
       data: result,
     });
 
-
-    if (api_res?.statusCode === 200) {                                                  
+    if (api_res?.statusCode === 200) {
       return send_success(
         res,
         api_res?.response?.message,
-        api_res?.response?.data
+        api_res?.response?.data,
       );
     } else {
       return invalid(res, api_res.response.message, api_res?.response?.data);
@@ -36,21 +32,28 @@ router.post("/register", async (req: Request, res: Response) => {
 
 router.post("/login", async (req: Request, res: Response) => {
   try {
-
     const result = req.body;
 
     const api_res = await axiosHandler({
       method: "POST",
       url: `${config?.authentication}/auth/login`,
-      data:result
+      data: result,
     });
 
-      logger.info(api_res)
+    logger.info(api_res);
 
     if (api_res?.statusCode === 200) {
-      return send_success(res, api_res?.response?.message,api_res?.response?.data);
+      return send_success(
+        res,
+        api_res?.response?.message,
+        api_res?.response?.data,
+      );
     } else {
-      return send_success(res, api_res?.response?.message, api_res?.response?.data);
+      return send_success(
+        res,
+        api_res?.response?.message,
+        api_res?.response?.data,
+      );
     }
   } catch (error: any) {
     return send_fail(res, error.message);
@@ -59,20 +62,26 @@ router.post("/login", async (req: Request, res: Response) => {
 
 router.post("/forgot-password", async (req: Request, res: Response) => {
   try {
-
     const result = req.body;
 
     const api_res = await axiosHandler({
       method: "POST",
       url: `${config?.authentication}/auth/forgot-password`,
-      data:result
+      data: result,
     });
 
-
     if (api_res?.statusCode === 200) {
-      return send_success(res, api_res?.response?.message,api_res?.response?.data);
+      return send_success(
+        res,
+        api_res?.response?.message,
+        api_res?.response?.data,
+      );
     } else {
-      return send_success(res, api_res?.response?.message, api_res?.response?.data);
+      return send_success(
+        res,
+        api_res?.response?.message,
+        api_res?.response?.data,
+      );
     }
   } catch (error: any) {
     return send_fail(res, error.message);
@@ -80,20 +89,26 @@ router.post("/forgot-password", async (req: Request, res: Response) => {
 });
 router.post("/update-password", async (req: Request, res: Response) => {
   try {
-
     const result = req.body;
 
     const api_res = await axiosHandler({
       method: "POST",
       url: `${config?.authentication}/auth/update-password`,
-      data:result
+      data: result,
     });
 
-
     if (api_res?.statusCode === 200) {
-      return send_success(res, api_res?.response?.message,api_res?.response?.data);
+      return send_success(
+        res,
+        api_res?.response?.message,
+        api_res?.response?.data,
+      );
     } else {
-      return send_success(res, api_res?.response?.message, api_res?.response?.data);
+      return send_success(
+        res,
+        api_res?.response?.message,
+        api_res?.response?.data,
+      );
     }
   } catch (error: any) {
     return send_fail(res, error.message);
