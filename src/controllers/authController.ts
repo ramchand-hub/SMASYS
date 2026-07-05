@@ -4,8 +4,7 @@ import jwt from "jsonwebtoken";
 import { successResponse, errorResponse } from "../utils/messages";
 import { sendLoginWelcomeEmail } from "../utils/mailer";
 
-const JWT_SECRET =
-  process.env.JWT_SECRET?.trim() || "smasys_default_jwt_secret_2024";
+
 
 export const register = async (
   req: Request,
@@ -53,13 +52,10 @@ export const login = async (
     // if (!valid)
     //   return res.status(401).json(errorResponse("Invalid credentials"));
 
-    const payload: any = { id: user._id, email: user.email };
 
-    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "1h" });
     res.json(
-      successResponse("Login successful", {
-        token,
-      }),
+      successResponse("Login successful"
+      ),
     );
 
     // Send welcome email in background (do not block login response)
