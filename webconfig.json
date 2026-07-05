@@ -1,4 +1,6 @@
 {
     "authentication" : "http://localhost:3001",
-    "base_url":"/smsys"
+    "base_url":"/smsys",
+    "JWT_SECRET":"smasys_2026_secure_random_jwt_key_8f3a9b2d5e7c1a4f6b9e8d3a7c5f2b1e"
+
 }

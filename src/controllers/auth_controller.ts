@@ -4,6 +4,8 @@ import { axiosHandler } from "../utils/messages/request_handler";
 import { invalid, send_fail, send_success } from "../utils/messages/response";
 import { Request, Response } from "express";
 import logger from "../utils/messages/logger";
+import jwt from "jsonwebtoken";
+
 const router = Router();
 
 router.post("/register", async (req: Request, res: Response) => {
@@ -40,14 +42,18 @@ router.post("/login", async (req: Request, res: Response) => {
       data: result,
     });
 
-    logger.info(api_res);
+    logger.info(api_res?.response?.data);
 
     if (api_res?.statusCode === 200) {
-      return send_success(
-        res,
-        api_res?.response?.message,
-        api_res?.response?.data,
-      );
+      const user_id = api_res?.response?.data?.user?._id;
+
+      const token = jwt.sign({ user_id }, config?.JWT_SECRET as string, {
+        expiresIn: "1h",
+      });
+      return send_success(res, api_res?.response?.message, {
+        ...api_res?.response?.data,
+        token,
+      });
     } else {
       return send_success(
         res,
