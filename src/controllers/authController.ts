@@ -98,23 +98,28 @@ export const update_password = async (
   next: NextFunction,
 ) => {
   try {
-    const {email, newpassword } = req.body;
+    const { email, newpassword } = req.body;
     if (!newpassword || !email)
-      return res.status(400).json(errorResponse("email and new password is required"));
-    const user_mail = await User.findOne({email});
-    if(!user_mail){
-      return res.status(401).json(errorResponse("user is not found!!")) 
+      return res
+        .status(400)
+        .json(errorResponse("email and new password is required"));
+    const user_mail = await User.findOne({ email });
+    if (!user_mail) {
+      return res.status(401).json(errorResponse("user is not found!!"));
     }
-const user = await User.updateOne({
-  $set:{
-    password:newpassword
-  }
-})
+    const user = await User.updateOne({
+      $set: {
+        password: newpassword,
+      },
+    });
 
+    if(user_mail?.password === newpassword){
+     return res.json(successResponse("password updated alreday",{}))
+    }else{
+    return res.json(successResponse("password updated successfully", {}));
 
-    return res.json(
-      successResponse("password updated successfully", { }),
-    );
+    }
+
   } catch (err) {
     next(err);
   }
