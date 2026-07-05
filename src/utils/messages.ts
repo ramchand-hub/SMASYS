@@ -1,3 +1,4 @@
+import sha256 from "sha256"
 export const successResponse = (message: string, data: any = null) => ({
   success: true,
   message,
@@ -9,3 +10,8 @@ export const errorResponse = (message: string, errors: any = null) => ({
   message,
   errors
 });
+
+
+export  function getencryptpassword(password:any) {
+    return sha256.x2(password);
+}

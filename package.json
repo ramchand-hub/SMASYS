@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "description": "School management backend - Express + MongoDB",
   "main": "dist/server.js",
- 
-   "scripts": {
+  "scripts": {
     "start": "ts-node-dev --respawn src/app.ts",
     "build": "webpack --mode production",
     "dev": "webpack --mode development --watch"
@@ -20,7 +19,8 @@
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^7.0.0",
     "morgan": "^1.10.0",
-    "nodemailer": "^8.0.1"
+    "nodemailer": "^8.0.1",
+    "sha256": "^0.2.0"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",

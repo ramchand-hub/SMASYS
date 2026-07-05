@@ -1,12 +1,39 @@
 import { Request, Response, NextFunction } from "express";
 import User from "../models/User";
-import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { successResponse, errorResponse } from "../utils/messages";
 import { sendLoginWelcomeEmail } from "../utils/mailer";
 
 const JWT_SECRET =
   process.env.JWT_SECRET?.trim() || "smasys_default_jwt_secret_2024";
+
+export const register = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { name, email, password } = req.body;
+    if (!name || !email || !password)
+      return res
+        .status(400)
+        .json(errorResponse("Email and password  and name is required"));
+
+    const user = await User.create({ name, email, password });
+
+    return res.json(
+      successResponse("user registered successfully..", user?.email),
+    );
+  } catch (err: any) {
+    if (err.code === 11000) {
+      return res.status(409).json({
+        success: false,
+        message: "Email already exists",
+      });
+    }
+    next(err);
+  }
+};
 
 export const login = async (
   req: Request,
@@ -44,32 +71,51 @@ export const login = async (
   }
 };
 
-export const register = async (
+export const forgot_password = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   try {
-    const { name, email, password } = req.body;
-    if (!name || !email || !password)
-      return res
-        .status(400)
-        .json(errorResponse("Email and password  and name is required"));
+    const { email } = req.body;
+    if (!email) return res.status(400).json(errorResponse("Email is required"));
 
-    const user = await User.create({ name, email, password });
+    const user = await User.findOne({ email });
+    if (!user)
+      return res.status(401).json(errorResponse("Invalid credentials"));
 
-    res.json(successResponse("user registered successfully..", user?.email));
-  } catch (err: any) {
-    if (err.code === 11000) {
-      return res.status(409).json({
-        success: false,
-        message: "Email already exists",
-      });
-    }
+    return res.json(
+      successResponse("password sent to email", { name: user?.name }),
+    );
+  } catch (err) {
     next(err);
   }
 };
 
-export default {
-  login,
+export const update_password = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const {email, newpassword } = req.body;
+    if (!newpassword || !email)
+      return res.status(400).json(errorResponse("email and new password is required"));
+    const user_mail = await User.findOne({email});
+    if(!user_mail){
+      return res.status(401).json(errorResponse("user is not found!!")) 
+    }
+const user = await User.updateOne({
+  $set:{
+    password:newpassword
+  }
+})
+
+
+    return res.json(
+      successResponse("password updated successfully", { }),
+    );
+  } catch (err) {
+    next(err);
+  }
 };
