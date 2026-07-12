@@ -123,11 +123,11 @@ router.post("/update-password", async (req: Request, res: Response) => {
 });
 
 router.post("/uploadfile",
-  multer_config.single("file"),
+  multer_config.array("file",20),
   async (req:Request,res:Response)=>{
   try{
 
-    const file = (req as any).file
+    const file = (req as any).files
 
      const api_res = await axiosHandler({
       method: "POST",
