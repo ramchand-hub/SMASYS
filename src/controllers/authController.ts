@@ -3,7 +3,7 @@ import User from "../models/User";
 import jwt from "jsonwebtoken";
 import { successResponse, errorResponse } from "../utils/messages";
 import { sendLoginWelcomeEmail } from "../utils/mailer";
-
+import  upload  from "../models/file";
 
 
 export const register = async (
@@ -114,6 +114,39 @@ export const update_password = async (
     }else{
     return res.json(successResponse("password updated successfully", {}));
 
+    }
+
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const upload_file = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const file = req.body;
+    if (!file)
+      return res
+        .status(400)
+        .json(errorResponse("File is required.."));
+    const user_file = await upload.create({
+      originalname: file.originalname,
+      filename: file.filename,
+      mimeType: file.mimetype,
+      size: file.size,
+      path: file.path,
+  })
+    if (!user_file) {
+      return res.status(401).json(errorResponse("file is not found!!"));
+    }else{
+      return res.status(201).json({
+      success: true,
+      message: "File uploaded successfully.",
+      data: user_file,
+    });
     }
 
   } catch (err) {

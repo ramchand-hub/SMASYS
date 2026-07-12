@@ -1,16 +1,15 @@
-import mongoose from 'mongoose';
-import webconfig from '../../webconfig.json';
-
-mongoose.set('bufferCommands', false);
+import mongoose from "mongoose";
+import webconfig from "../../webconfig.json";
 
 const connectDB = async () => {
-  const uri = process.env.MONGO_URI || (webconfig && (webconfig.mongoUri || webconfig?.mongoUri));
-  console.log('Connecting to MongoDB...', uri);
-  if (!uri) throw new Error('MONGO_URI not set in env or webconfig.json');
+  const uri = webconfig?.mongoUri ;
   await mongoose.connect(uri, {
+    minPoolSize: 10,
     serverSelectionTimeoutMS: 5000,
+    maxPoolSize: 40,
+    maxIdleTimeMS: 10,
   });
-  console.log('MongoDB connected');
+  console.log(uri,"MongoDB connected");
 };
 
 export default connectDB;

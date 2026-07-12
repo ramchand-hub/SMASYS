@@ -4,6 +4,7 @@ import cors from "cors";
 import errorHandler from "./middleware/errorHandler";
 import mainRouter from "./routes/mainRote";
 import connectDB from "./config/db";
+import redis_connect from "./config/redis";
 // import "./streams/Readble_stream"
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -27,6 +28,7 @@ app.use((req, res) => {
 app.use(errorHandler);  
 app.listen(PORT, async () => {
   await connectDB();
+  // const redisclient =  redis_connect();
   console.log(`Auth service running on port ${PORT}`);
 });
 export default app;
