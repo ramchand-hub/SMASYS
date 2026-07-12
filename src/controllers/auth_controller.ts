@@ -5,7 +5,7 @@ import { invalid, send_fail, send_success } from "../utils/messages/response";
 import { Request, Response } from "express";
 import logger from "../utils/messages/logger";
 import jwt from "jsonwebtoken";
-
+import multer_config from "../multer/multer_config";
 const router = Router();
 
 router.post("/register", async (req: Request, res: Response) => {
@@ -44,7 +44,7 @@ router.post("/login", async (req: Request, res: Response) => {
 
     logger.info(api_res?.response?.data);
 
-    
+
     if (api_res?.statusCode === 200) {
       const user_id = api_res?.response?.data?.user?._id;
 
@@ -121,5 +121,38 @@ router.post("/update-password", async (req: Request, res: Response) => {
     return send_fail(res, error.message);
   }
 });
+
+router.post("/uploadfile",
+  multer_config.single("file"),
+  async (req:Request,res:Response)=>{
+  try{
+
+    const file = (req as any).file
+
+     const api_res = await axiosHandler({
+      method: "POST",
+      url: `${config?.authentication}/auth/uploadfile`,
+      data: file,
+    });
+
+    if (api_res?.statusCode === 200) {
+      return send_success(
+        res,
+        api_res?.response?.message,
+        api_res?.response?.data,
+      );
+    } else {
+      return send_success(
+        res,
+        api_res?.response?.message,
+        api_res?.response?.data,
+      );
+    }
+
+  }catch(error:any){
+    return send_fail(res, error.message);
+
+  }
+})
 
 export default router;

@@ -41,10 +41,12 @@ const fileFilter = (req, file,cb)=>{
   );
 }
 
-export const multer_config = multer({
+const multer_config = multer({
   storage,
   fileFilter,
   limits:{
     fileSize: 5*1024*1024
   }
 });
+
+export default multer_config;
