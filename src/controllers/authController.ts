@@ -132,13 +132,24 @@ export const upload_file = async (
       return res
         .status(400)
         .json(errorResponse("File is required.."));
-    const user_file = await upload.create({
-      originalname: file.originalname,
-      filename: file.filename,
-      mimeType: file.mimetype,
-      size: file.size,
-      path: file.path,
-  })
+    const user_file = await upload.insertMany(
+      file.map((item)=>({
+          originalname: item.originalname,
+       filename: item.filename,
+     mimeType: item.mimetype,
+       size: item.size,
+       path: item.path,
+      })
+      
+      )
+  //     {
+  //     originalname: file.originalname,
+  //     filename: file.filename,
+  //     mimeType: file.mimetype,
+  //     size: file.size,
+  //     path: file.path,
+  // }
+)
     if (!user_file) {
       return res.status(401).json(errorResponse("file is not found!!"));
     }else{
