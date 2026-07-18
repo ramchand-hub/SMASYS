@@ -155,4 +155,35 @@ router.post("/uploadfile",
   }
 })
 
+router.get("/downloadfile/:id",
+  async (req:Request,res:Response)=>{
+  try{
+
+    const file_id = req.params.id;
+     const api_res = await axiosHandler({
+      method: "GET",
+      url: `${config?.authentication}/auth/downloadfile/${file_id}`,
+      // data: file,
+    });
+
+    if (api_res?.statusCode === 200) {
+      return send_success(
+        res,
+        api_res?.response?.message,
+        api_res?.response?.data,
+      );
+    } else {
+      return send_success(
+        res,
+        api_res?.response?.message,
+        api_res?.response?.data,
+      );
+    }
+
+  }catch(error:any){
+    return send_fail(res, error.message);
+
+  }
+})
+
 export default router;
