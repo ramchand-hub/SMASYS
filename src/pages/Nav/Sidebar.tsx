@@ -54,7 +54,7 @@ const Sidebar = ({ open, setOpen }:any) => {
           </NavLink>
 
           <NavLink
-            to="/settings"
+            to="/Teachers"
             className={({ isActive }) =>
               `flex items-center gap-3 px-5 py-3 hover:bg-blue-600 ${
                 isActive ? "bg-blue-600" : ""
@@ -62,7 +62,7 @@ const Sidebar = ({ open, setOpen }:any) => {
             }
           >
             <FaCog />
-            Settings
+            Teachers
           </NavLink>
 
         </nav>
