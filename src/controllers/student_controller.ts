@@ -3,6 +3,8 @@ import { Request, Response } from "express";
 import { axiosHandler } from "../utils/messages/request_handler";
 import config from "../../webconfig.json"
 import { invalid, send_fail, send_success } from "../utils/messages/response";
+import logger from "../utils/messages/logger";
+import { error } from "node:console";
 const router = Router();
 
 router.post("/createStudent", async (req:Request,res:Response) => {
@@ -24,7 +26,10 @@ router.post("/createStudent", async (req:Request,res:Response) => {
         }
 
     }catch(err:any){
-        return send_fail(res, err?.message)
+                logger.error("student not created",{
+                    error:err.message
+                })
+        return send_fail(res, err?.message);
     }
 })
 
