@@ -164,3 +164,32 @@ export const upload_file = async (
     next(err);
   }
 };
+
+export const download_file = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const file = req.params.id;
+    if (!file)
+      return res
+        .status(400)
+        .json(errorResponse("File is required.."));
+
+        const file_id = await upload.findById(file);
+        
+    if (!file_id) {
+      return res.status(401).json(errorResponse("file is not found!!"));
+    }else{
+      return res.status(200).json({
+      success: true,
+      message: "File downloaded successfully.",
+      data: file_id,
+    });
+    }
+
+  } catch (err) {
+    next(err);
+  }
+};
