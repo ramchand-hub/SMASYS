@@ -7,7 +7,7 @@ import connectDB from "./config/db";
 import redis_connect from "./config/redis";
 // import "./streams/Readble_stream"
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3002;
 
 app.use(morgan("dev"));
 app.use(cors({
