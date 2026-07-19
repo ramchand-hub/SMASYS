@@ -14,6 +14,8 @@ interface ApiResponseInterface {
 export const axiosHandler = async (
   config: AxiosRequestConfig,
 ): Promise<ApiResponseInterface> => {
+
+  
   const context = {
     url: config.url,
     method: config.method?.toUpperCase() || "UNKNOWN",
