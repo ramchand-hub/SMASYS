@@ -8,8 +8,22 @@ export const createTeacher = async (
   next: NextFunction,
 ) => {
   try {
-    const teacher = await Teacher.create(req.body as Partial<ITeacher>);
-    res.status(201).json(successResponse("Teacher created", teacher));
+
+    const result =req.body
+    const isExist = await Teacher.findOne({
+      Email:result?.Email
+    })
+    if(isExist){
+            return res.status(409).json(errorResponse("teacher is already exist.."))
+    }
+    const teacher = await Teacher.create(result);
+    
+    if(!teacher){
+      return res.status(400).json(errorResponse("teacher is not found"))
+    }else{
+    return res.status(201).json(successResponse("Teacher created", teacher));
+
+    }
   } catch (err) {
     next(err);
   }
@@ -22,10 +36,15 @@ export const getTeachers = async (
 ) => {
   try {
     const teachers = await Teacher.find();
+    const teacher_count = await Teacher.aggregate([{
+      $count:"Teachers_count"
+    }])
     if(teachers.length === 0) {
       return res.json(successResponse("No teachers found", []));
+    }else{
+    return res.json(successResponse("Teachers retrieved successfully", {teachers,Teachers_count:teacher_count[0].Teachers_count}));
+
     }
-    res.json(successResponse("Teachers retrieved successfully", teachers));
   } catch (err) {
     next(err);
   }
