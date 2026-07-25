@@ -5,6 +5,7 @@ import App from './App.tsx'
 import { Provider } from 'react-redux'
 import {store} from "./redux/Store.ts"
 import { Authprovider } from './pages/context/Contextapi.tsx'
+import "react-circular-progressbar/dist/styles.css";
 createRoot(document.getElementById('root')!).render(
   <Provider store={store}>
      <StrictMode>
