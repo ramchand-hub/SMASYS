@@ -11,58 +11,76 @@ import { GraduationCap, Users, Briefcase } from "lucide-react";
 
 const DashboardPage = () => {
   return (
-    <div className="bg-[#F5F7FB] min-h-screen p-6">
-      <div className="grid grid-cols-12 gap-6">
-        {/* ================= LEFT SECTION ================= */}
+    <div className="bg-[#F5F7FB] min-h-screen">
 
-        <div className="col-span-12 xl:col-span-8 space-y-6">
+      <div className="grid grid-cols-12 gap-6">
+
+        {/* LEFT SECTION */}
+        <div className="col-span-8 space-y-6">
+
           <WelcomeCard />
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-2 gap-6">
             <StudentOverview />
-
             <NoticeBoardCard />
           </div>
 
           <EarningsChartCard />
+
         </div>
 
-        {/* ================= RIGHT SECTION ================= */}
+        {/* RIGHT SECTION */}
+        <div className="col-span-4 space-y-6">
 
-        <div className="col-span-12 xl:col-span-4 space-y-6">
-          {/* Stats + Calendar */}
+          {/* Top */}
+          <div className="grid grid-cols-5 gap-5">
 
-          <div className="grid grid-cols-12 gap-4">
-            {/* Left */}
+            {/* Stats */}
+            <div className="col-span-2 space-y-5">
 
-            <div className="col-span-6 space-y-4">
               <StatsCard
                 title="Students"
                 value="5,909"
-                bgColor="bg-yellow-200"
+                bgColor="bg-[#FFE97A]"
               />
 
-              <StatsCard title="Teachers" value="60" bgColor="bg-violet-100" />
+              <StatsCard
+                title="Teachers"
+                value="60"
+                bgColor="bg-[#E6DBFF]"
+              />
 
-              <StatsCard title="Employee" value="100" bgColor="bg-yellow-200" />
+              <StatsCard
+                title="Employee"
+                value="100"
+                bgColor="bg-[#FFE97A]"
+              />
+
             </div>
 
-            {/* Right */}
-
-            <div className="col-span-6">
+            {/* Calendar */}
+            <div className="col-span-3">
               <CalendarCard />
             </div>
+
           </div>
 
+          {/* Financial */}
           <FinancialOverviewCard />
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Bottom */}
+          <div className="grid grid-cols-2 gap-5">
+
             <FeeStatusCard />
 
             <MessagesCard />
+
           </div>
+
         </div>
+
       </div>
+
     </div>
   );
 };

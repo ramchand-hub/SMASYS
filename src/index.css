@@ -8,3 +8,26 @@ html, body, #root {
   height: 100%;
   width: 100%;
 }
+
+@layer components {
+  .apexcharts-tooltip {
+    @apply rounded-2xl shadow-xl border-0 bg-white;
+  }
+
+  .apexcharts-tooltip-title {
+    @apply bg-white border-b-0 font-semibold text-gray-700;
+  }
+
+  .apexcharts-legend-text {
+    @apply text-gray-700 font-semibold;
+  }
+
+  .apexcharts-menu {
+    @apply rounded-xl shadow-lg border border-gray-200;
+  }
+
+  .apexcharts-xaxis-label,
+  .apexcharts-yaxis-label {
+    @apply fill-gray-500;
+  }
+}

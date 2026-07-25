@@ -6,6 +6,7 @@ import { ApexOptions } from "apexcharts";
 const EarningsChartCard = () => {
   const options: ApexOptions = {
     chart: {
+      type: "line",
       toolbar: {
         show: false,
       },
@@ -14,19 +15,42 @@ const EarningsChartCard = () => {
       },
     },
 
+    colors: ["#A7E1FB", "#C7BEFF"],
+
     stroke: {
       curve: "smooth",
-      width: 4,
+      width: 5,
+      lineCap: "round",
     },
-
-    colors: ["#8B5CF6"],
 
     dataLabels: {
       enabled: false,
     },
 
+    markers: {
+      size: 0,
+      hover: {
+        size: 8,
+      },
+    },
+
+    legend: {
+      show: true,
+      position: "top",
+      horizontalAlign: "center",
+      fontSize: "14px",
+      markers: {
+        size: 8,
+        strokeWidth: 0,
+        fillColors: ["#A7E1FB", "#C7BEFF"],
+      },
+      itemMargin: {
+        horizontal: 20,
+      },
+    },
+
     grid: {
-      borderColor: "#F1F5F9",
+      borderColor: "#ECECF5",
       strokeDashArray: 5,
     },
 
@@ -39,13 +63,12 @@ const EarningsChartCard = () => {
         "May",
         "Jun",
         "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
       ],
-
-      labels: {
-        style: {
-          colors: "#94A3B8",
-        },
-      },
 
       axisBorder: {
         show: false,
@@ -54,49 +77,61 @@ const EarningsChartCard = () => {
       axisTicks: {
         show: false,
       },
+
+      labels: {
+        style: {
+          colors: "#555",
+          fontSize: "15px",
+        },
+      },
     },
 
     yaxis: {
       min: 0,
-      max: 6000,
-      tickAmount: 6,
+      max: 1000,
+      tickAmount: 4,
 
       labels: {
-        formatter: (val) => `${val / 1000}k`,
+        formatter: (val) => `${val}K`,
+        style: {
+          colors: "#555",
+          fontSize: "15px",
+        },
       },
     },
 
     tooltip: {
-      theme: "dark",
-    },
+      theme: "light",
+      shared: true,
 
-    legend: {
-      show: false,
+      y: {
+        formatter: (val) => `$${val.toFixed(3)}K`,
+      },
     },
   };
 
   const series = [
     {
-      name: "Earnings",
-      data: [1800, 2400, 3200, 2900, 4100, 3700, 5200],
+      name: "Income",
+      data: [580, 860, 560, 610, 720, 650, 880, 850, 900, 760, 600, 940],
+    },
+    {
+      name: "Expense",
+      data: [390, 570, 340, 420, 540, 380, 420, 330, 500, 590, 330, 620],
     },
   ];
 
   return (
     <Card
       title="Earnings"
+      className="rounded-3xl bg-white shadow-sm border border-gray-100"
       headerRight={
-        <button>
-          <MoreHorizontal size={20} />
+        <button className="p-2 rounded-lg hover:bg-gray-100 transition">
+          <MoreHorizontal size={20} className="text-gray-600" />
         </button>
       }
     >
-      <Chart
-        options={options}
-        series={series}
-        type="line"
-        height={320}
-      />
+      <Chart options={options} series={series} type="line" height={360} />
     </Card>
   );
 };

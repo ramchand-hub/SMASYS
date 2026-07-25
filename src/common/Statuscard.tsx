@@ -20,7 +20,7 @@ const StatsCard: React.FC<StatsCardProps> = ({
   <div className="flex justify-between items-start">
     <div>
       <p className="text-gray-700 text-lg">{title}</p>
-      <h2 className="text-5xl font-bold mt-2">{value}</h2>
+      <h2 className="text-3xl mt-2">{value}</h2>
     </div>
 
     <button className="text-gray-600 text-xl font-bold">
