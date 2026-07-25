@@ -1,13 +1,7 @@
 import { NavLink } from "react-router-dom";
-import {
-  FaHome,
-  FaUserGraduate,
-  FaCog,
-  FaTimes,
-} from "react-icons/fa";
+import { FaHome, FaUserGraduate, FaCog, FaTimes } from "react-icons/fa";
 
-const Sidebar = ({ open, setOpen }:any) => {
-
+const Sidebar = ({ open, setOpen }: any) => {
   return (
     <>
       <div
@@ -15,20 +9,15 @@ const Sidebar = ({ open, setOpen }:any) => {
         ${open ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}
       >
         <div className="flex items-center justify-between p-5 border-b border-gray-700">
-
-          <h2 className="text-xl font-bold">
-            Admin Panel
-          </h2>
+          <h2 className="text-xl font-bold">SMASYS</h2>
 
           <FaTimes
             className="md:hidden cursor-pointer"
             onClick={() => setOpen(false)}
           />
-
         </div>
 
         <nav className="mt-5 flex flex-col">
-
           <NavLink
             to="/"
             className={({ isActive }) =>
@@ -64,9 +53,7 @@ const Sidebar = ({ open, setOpen }:any) => {
             <FaCog />
             Teachers
           </NavLink>
-
         </nav>
-
       </div>
 
       {open && (

@@ -5,6 +5,7 @@ import googleIcon from "../assets/images/google.png";
 import { createUser, loginUser } from "../Services/Allservice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../custom_hooks/Useauth";
 export default function Register() {
   const dispatch = useDispatch;
   const navigate = useNavigate();
@@ -16,6 +17,7 @@ export default function Register() {
   });
 
   const [isLogin, setIsLogin] = React.useState(false);
+  const { userlogin } = useAuth();
 
   const admin_register = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -29,6 +31,9 @@ export default function Register() {
       const responseData = await createUser(payload);
       if (responseData && responseData?.success === true) {
         setIsLogin(!isLogin);
+        userlogin({
+          userdata: responseData.data.name,
+        });
       }
     } catch (error) {
       console.error("Error creating user:", error);
@@ -40,15 +45,19 @@ export default function Register() {
   };
 
   const handleuserlogin = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
     try {
+      e.preventDefault();
+
       const payload = {
         email: formData.email,
         password: formData.password,
       };
 
       const Response = await loginUser(payload);
+      console.log(Response, "login response...");
+
       if (Response && Response.success === true) {
+        // userlogin(Response.success)
         localStorage.setItem("token", Response.token);
         navigate("/Dashboard");
       }
@@ -73,6 +82,7 @@ export default function Register() {
                 alt="SMSYS Logo"
                 className="w-10 h-10 object-contain"
               />
+
               <span className="text-2xl font-semibold">SMASYS</span>
             </div>
 

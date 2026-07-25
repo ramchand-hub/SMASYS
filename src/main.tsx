@@ -4,10 +4,14 @@ import "./index.css"
 import App from './App.tsx'
 import { Provider } from 'react-redux'
 import {store} from "./redux/Store.ts"
+import { Authprovider } from './pages/context/Contextapi.tsx'
 createRoot(document.getElementById('root')!).render(
   <Provider store={store}>
      <StrictMode>
-    <App />
+      <Authprovider>
+            <App />
+
+      </Authprovider>
   </StrictMode>,
   </Provider>
  
