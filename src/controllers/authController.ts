@@ -21,7 +21,7 @@ export const register = async (
     const user = await User.create({ name, email, password });
 
     return res.json(
-      successResponse("user registered successfully..", user?.email),
+      successResponse("user registered successfully..", {email:user?.email, name:user?.name}),
     );
   } catch (err: any) {
     if (err.code === 11000) {

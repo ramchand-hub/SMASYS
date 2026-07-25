@@ -3,6 +3,7 @@ import webconfig from "../../webconfig.json";
 
 const connectDB = async () => {
   const uri = webconfig?.mongoUri ;
+  
   await mongoose.connect(uri, {
     minPoolSize: 10,
     serverSelectionTimeoutMS: 5000,
