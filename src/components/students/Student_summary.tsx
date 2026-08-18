@@ -4,6 +4,7 @@ import { Pencil, Trash2, Eye, Grid2x2 } from "lucide-react";
 import CommonTable, { TableColumn } from "../../common/Table";
 import { create_student, studentList } from "../../Services/Allservice";
 import Add from "../../common/Add";
+import { useNavigate } from "react-router-dom";
 interface Student {
   id: number;
   last_name: string;
@@ -18,8 +19,8 @@ interface Student {
 }
 
 export default function Student_summary() {
-
   const [student_list, setStudentList] = useState([]);
+  const navigate = useNavigate();
   useEffect(() => {
     const getStudentlist = async () => {
       try {
@@ -32,84 +33,72 @@ export default function Student_summary() {
 
     getStudentlist();
   }, []);
-  
- const columns: TableColumn<Student>[] = [
-  {
-    header: "Id",
-    render: (_row, index) => index + 1,
-  },
-  {
-    header: "Student Name",
+
+  const columns: TableColumn<Student>[] = [
+    {
+      header: "Id",
+      render: (_row, index) => index + 1,
+    },
+    {
+      header: "Student Name",
       render: (row) => row.last_name || "NA",
+    },
+    {
+      header: "Roll No",
+      render: (row) => row.roll || "NA",
+    },
+    {
+      header: "Class",
+      render: (row) => row.class || "NA",
+    },
+    {
+      header: "Accom_Type",
+      render: (row) => row.accomType || "NA",
+    },
+    {
+      header: "Transport",
+      render: (row) => row.transport || "NA",
+    },
+    {
+      header: "Location",
+      render: (row) => row.location || "NA",
+    },
+    {
+      header: "Contact",
+      render: (row) => row.student_phone || "NA",
+    },
+    {
+      header: "Rank",
+      render: (row) => row.rank || "NA",
+    },
+    {
+      header: "Points",
+      render: (row) => row.points || "NA",
+    },
+    {
+      header: "Action",
+      align: "center",
+      render: (row) => (
+        <div className="flex items-center justify-center gap-3">
+          <Pencil
+            size={18}
+            className="cursor-pointer text-gray-500 hover:text-blue-600"
+            // onClick={() => handleEdit(row)}
+          />
 
-  },
-  {
-    header: "Roll No",
-          render: (row) => row.roll || "NA",
-
-  },
-  {
-    header: "Class",
-          render: (row) => row.class || "NA",
-
-  },
-  {
-    header: "Accom_Type",
-          render: (row) => row.accomType || "NA",
-
-  },
-   {
-    header: "Transport",
-          render: (row) => row.transport || "NA",
-
-  },
-   {
-    header: "Location",
-          render: (row) => row.location || "NA",
-
-  },
-  {
-    header: "Contact",
-          render: (row) => row.student_phone || "NA",
-
-  },
-  {
-    header: "Rank",
-          render: (row) => row.rank || "NA",
-
-  },
-  {
-    header: "Points",
-          render: (row) => row.points || "NA",
-
-  },
-  {
-    header: "Action",
-    align: "center",
-    render: (row) => (
-      <div className="flex items-center justify-center gap-3">
-        <Pencil
-          size={18}
-          className="cursor-pointer text-gray-500 hover:text-blue-600"
-          // onClick={() => handleEdit(row)}
-        />
-
-        <Trash2
-          size={18}
-          className="cursor-pointer text-gray-500 hover:text-red-600"
-          // onClick={() => handleDelete(row.id)}
-        />
-
-      </div>
-    ),
-  },
-];
+          <Trash2
+            size={18}
+            className="cursor-pointer text-gray-500 hover:text-red-600"
+            // onClick={() => handleDelete(row.id)}
+          />
+        </div>
+      ),
+    },
+  ];
 
   const studentCreate = async () => {
     try {
-      const payload = {};
-
-      const response = await create_student(payload);
+      navigate("/student-add");
     } catch (err) {
       console.error(err);
     }
@@ -126,11 +115,7 @@ export default function Student_summary() {
       </div>
 
       {/* Table */}
-        <CommonTable 
-        
-        columns={columns}
-        data={student_list}
-        />
+      <CommonTable columns={columns} data={student_list} />
     </div>
   );
 }
