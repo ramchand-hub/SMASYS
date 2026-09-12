@@ -38,10 +38,15 @@ router.post("/createTeacher", async (req: Request, res: Response) => {
 
 router.get("/getTeachersList", async (req: Request, res: Response) => {
   try {
-    // const result = req.body;
+    const {page,pagesize} = req.query;
     const api_res = await axiosHandler({
       method: "GET",
       url: `${config?.teacher_microservice}/teachers/getTeachersList`,
+      params:{
+      page,
+      pagesize
+      
+      },
     });
 
     if (
