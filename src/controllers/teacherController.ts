@@ -9,19 +9,20 @@ export const createTeacher = async (
 ) => {
   try {
 
-    const result =req.body
+    const result = req.body
     const isExist = await Teacher.findOne({
-      Email:result?.Email
+      Email: result?.Email
     })
-    if(isExist){
-            return res.status(409).json(errorResponse("teacher is already exist.."))
+    if (isExist) {
+      return res.status(409).json(errorResponse("teacher is already exist.."))
     }
     const teacher = await Teacher.create(result);
-    
-    if(!teacher){
+
+    if (teacher) {
+      return res.status(201).json(successResponse("Teacher created", teacher));
+
+    } else {
       return res.status(400).json(errorResponse("teacher is not found"))
-    }else{
-    return res.status(201).json(successResponse("Teacher created", teacher));
 
     }
   } catch (err) {
@@ -35,14 +36,27 @@ export const getTeachers = async (
   next: NextFunction,
 ) => {
   try {
+    const { page, pagesize }: any = _req.query
     const teachers = await Teacher.find();
-    const teacher_count = await Teacher.aggregate([{
-      $count:"Teachers_count"
-    }])
-    if(teachers.length === 0) {
+    // const teacher_count = await Teacher.aggregate([{
+    //   $count:"Teachers_count"
+    // }])
+    const teacher_count = await Teacher.countDocuments();
+
+    // Calculate total pages
+    const total_pages = Math.ceil(teacher_count / pagesize);
+
+    if (teachers.length === 0) {
       return res.json(successResponse("No teachers found", []));
-    }else{
-    return res.json(successResponse("Teachers retrieved successfully", {teachers,Teachers_count:teacher_count[0].Teachers_count}));
+    } else {
+      return res.json(successResponse("Teachers retrieved successfully", {
+        teachers, pagination: {
+          page,
+          pagesize,
+          teacher_count,
+          total_pages
+        }
+      }));
 
     }
   } catch (err) {
