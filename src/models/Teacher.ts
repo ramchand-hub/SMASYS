@@ -6,7 +6,7 @@ export interface ITeacher extends Document {
   contact: string;
   subject: string;
   gender: string;
-  qualificaton: string;
+  qualification: string;
   address: string;
   createdAt?: Date;
 }
@@ -23,7 +23,7 @@ const TeacherSchema = new Schema<ITeacher>({
   contact: { type: String, required: true, trim: true },
   subject: { type: String, required: true, trim: true },
   gender: { type: String, required: true, trim: true, lowercase: true },
-  qualificaton: { type: String, trim: true },
+  qualification: { type: String, trim: true },
   address: { type: String, trim: true },
   createdAt: { type: Date, default: Date.now },
 });

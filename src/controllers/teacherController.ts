@@ -71,9 +71,14 @@ export const getTeacherById = async (
 ) => {
   try {
     const teacher = await Teacher.findById(req.params.id);
-    if (!teacher)
+    if (!teacher) {
       return res.status(404).json(errorResponse("Teacher not found"));
-    res.json(successResponse("Teacher retrieved", teacher));
+
+    } else {
+      return res.status(200).json(successResponse("Teacher retrieved", teacher));
+
+    }
+
   } catch (err) {
     next(err);
   }
@@ -86,24 +91,36 @@ export const updateTeacher = async (
 ) => {
   try {
     if (!req.body || Object.keys(req.body).length === 0) {
-      return res.status(400).json(errorResponse("No update fields provided"));
+      return res.status(400).json(
+        errorResponse("No update fields provided")
+      );
     }
 
-    const teacher = await Teacher.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    });
-    console.log(
-      "Update request for teacher ID:",
-      req.params.id,
-      "Update data:",
-      req.body,
-      "Resulting teacher:",
-      teacher,
+    const teacherId = req.params.id;
+    const result = req.body
+    const teacher = await Teacher.findByIdAndUpdate(
+      teacherId,
+      result,
+      {
+        new: true,
+        runValidators: true,
+      }
     );
-    if (!teacher)
-      return res.status(404).json(errorResponse("Teacher not found"));
-    res.json(successResponse("Teacher updated", teacher));
+
+
+    if (teacher) {
+      return res.status(200).json(
+        successResponse("Teacher is updated", teacher)
+      );
+
+
+    } else {
+      return res.status(404).json(
+        errorResponse("Teacher not found")
+      );
+    }
+
+
   } catch (err) {
     next(err);
   }
@@ -116,9 +133,13 @@ export const deleteTeacher = async (
 ) => {
   try {
     const teacher = await Teacher.findByIdAndDelete(req.params.id);
-    if (!teacher)
-      return res.status(404).json(errorResponse("Teacher not found"));
-    res.json(successResponse("Teacher deleted", null));
+    if (teacher) {
+      res.json(successResponse("Teacher deleted", null));
+    } else {
+      return res.status(404).json(errorResponse("Teacher is not deleted"));
+    }
+
+
   } catch (err) {
     next(err);
   }
