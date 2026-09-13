@@ -4,6 +4,7 @@ import { axiosHandler } from "../utils/messages/request_handler";
 import config from "../../webconfig.json";
 import { invalid, send_fail, send_success } from "../utils/messages/response";
 import logger from "../utils/messages/logger";
+import { error } from "node:console";
 const router = Router();
 
 router.post("/createTeacher", async (req: Request, res: Response) => {
@@ -67,5 +68,62 @@ router.get("/getTeachersList", async (req: Request, res: Response) => {
     return send_fail(res, err?.message);
   }
 });
+router.put("/updateTeacher/:id", async(req:Request, res:Response)=>{
+  try{
+      const {id} = req.params
+      const result = req.body
+      const api_res = await axiosHandler({
+      method: "PUT",
+      url: `${config?.teacher_microservice}/teachers/updateTeacher/${id}`,
+      data: result
+    });
+     if (
+      api_res?.statusCode === 200 
+    ) {
+      return send_success(
+        res,
+        api_res?.response?.message,
+        api_res?.response?.data,
+      );
+    } else {
+      return invalid(res, api_res?.response?.message, api_res?.response?.data);
+    }
 
+  }catch(err:any){
+    logger.error("teacher is not getting",{
+      error:err.message
+    })
+        return send_fail(res, err?.message);
+
+  }
+})
+router.delete("/deleteTeacher/:id", async(req:Request, res:Response)=>{
+  try{
+      const {id} = req.params
+      // const result = req.body
+      const api_res = await axiosHandler({
+      method: "DELETE",
+      url: `${config?.teacher_microservice}/teachers/deleteTeacher/${id}`,
+      // data: result
+    });
+     if (
+      api_res?.statusCode === 200 
+    ) {
+      return send_success(
+        res,
+        api_res?.response?.message,
+        api_res?.response?.data,
+      );
+    } else {
+      return invalid(res, api_res?.response?.message, api_res?.response?.data);
+    }
+
+  }catch(err:any){
+    logger.error("teacher is not getting",{
+      error:err.message
+    })
+        return send_fail(res, err?.message);
+
+  }
+})
 export default router;
