@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
     Search,
     SlidersHorizontal,
@@ -10,61 +10,13 @@ import {
 } from "lucide-react";
 import Pagination from "../../common/Pagination";
 import { useNavigate } from "react-router-dom";
-const teachers = [
-    {
-        id: "T001",
-        name: "Priya Sharma",
-        subject: "Mathematics",
-        email: "priya@school.com",
-        phone: "9876543201",
-        status: "Active",
-    },
-    {
-        id: "T002",
-        name: "Amit Kumar",
-        subject: "Science",
-        email: "amit@school.com",
-        phone: "9876543202",
-        status: "Active",
-    },
-    {
-        id: "T003",
-        name: "Neha Singh",
-        subject: "English",
-        email: "neha@school.com",
-        phone: "9876543203",
-        status: "Inactive",
-    },
-    {
-        id: "T004",
-        name: "Rajesh Patel",
-        subject: "Social Science",
-        email: "rajesh@school.com",
-        phone: "9876543204",
-        status: "Active",
-    },
-    {
-        id: "T005",
-        name: "Pooja Verma",
-        subject: "Computer",
-        email: "pooja@school.com",
-        phone: "9876543205",
-        status: "Active",
-    },
-    {
-        id: "T006",
-        name: "Suresh Yadav",
-        subject: "Hindi",
-        email: "suresh@school.com",
-        phone: "9876543206",
-        status: "Active",
-    },
-];
+import { teachersList } from "../../Services/Allservice";
+
 
 const TeacherList = () => {
 
     const navigate = useNavigate()
-
+    const [teachers, setTeachers] = useState<any[]>([])
     const addteacher = () => {
         try {
             navigate("/teachers-add")
@@ -72,6 +24,32 @@ const TeacherList = () => {
             console.error(err)
         }
     }
+
+    useEffect(() => {
+        try {
+            const teachersLists = async () => {
+                try {
+                    const payload = {
+                        page: 1,
+                        pagesize: 5
+
+                    }
+                    const response = await teachersList(payload.page, payload.pagesize)
+                    if (response) {
+                        setTeachers(response.data.data.teachers)
+                    }
+
+                } catch (err) {
+                    console.error(err)
+                }
+            }
+
+            teachersLists()
+
+        } catch (err) {
+            console.error("error in teachers list", err)
+        }
+    }, [])
     return (
         <div className="w-full">
 
@@ -254,21 +232,21 @@ const TeacherList = () => {
                         {/* TABLE BODY */}
                         <tbody>
 
-                            {teachers.map((teacher) => (
+                            {teachers.map((teacher, index) => (
 
                                 <tr
-                                    key={teacher.id}
                                     className="
                     border-b
                     border-slate-100
                     last:border-0
                     hover:bg-blue-50/30
                   "
+
                                 >
 
-                                    {/* ID */}
+
                                     <td className="px-3 py-2 text-[9px] text-slate-500">
-                                        {teacher.id}
+                                        {index + 1}
                                     </td>
 
 
@@ -290,13 +268,13 @@ const TeacherList = () => {
 
                                     {/* EMAIL */}
                                     <td className="px-3 py-2 text-[9px] text-slate-500">
-                                        {teacher.email}
+                                        {teacher.mail}
                                     </td>
 
 
                                     {/* PHONE */}
                                     <td className="px-3 py-2 text-[9px] text-slate-500">
-                                        {teacher.phone}
+                                        {teacher.contact}
                                     </td>
 
 
