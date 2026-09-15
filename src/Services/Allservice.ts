@@ -71,3 +71,25 @@ export async function teachersList(page: any, pagesize: any): Promise<any> {
 		throw error;
 	}
 }
+
+export async function updateTeacher(teacherId:string, data:any): Promise<any> {
+	try {
+		const response = await api.put(`/teachers/updateTeacher/${teacherId}`, data
+		);
+		return response;
+	} catch (error) {
+		console.error("updateTeacher API error:", error);
+		throw error;
+	}
+}
+
+export async function deleteTeacher(teacherId:string): Promise<any> {
+	try {
+		const response = await api.delete(`/teachers/deleteTeacher/${teacherId}`,
+		);
+		return response;
+	} catch (error) {
+		console.error("deleteTeacher API error:", error);
+		throw error;
+	}
+}

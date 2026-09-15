@@ -10,13 +10,19 @@ import {
 } from "lucide-react";
 import Pagination from "../../common/Pagination";
 import { useNavigate } from "react-router-dom";
-import { teachersList } from "../../Services/Allservice";
+import { deleteTeacher, teachersList } from "../../Services/Allservice";
 
 
 const TeacherList = () => {
 
     const navigate = useNavigate()
     const [teachers, setTeachers] = useState<any[]>([])
+    const [teacherDelete, setTeacherDelete] = useState<boolean>(false)
+    const [Totalpages, setTotalPages] = useState<number>()
+    const [Teachercount, setTeachercount] = useState()
+    const page = 1
+    const pagesize = 5
+
     const addteacher = () => {
         try {
             navigate("/teachers-add")
@@ -30,13 +36,16 @@ const TeacherList = () => {
             const teachersLists = async () => {
                 try {
                     const payload = {
-                        page: 1,
-                        pagesize: 5
+                        page: page,
+                        pagesize: pagesize
 
                     }
                     const response = await teachersList(payload.page, payload.pagesize)
-                    if (response) {
+                    if (response !==null || undefined) {
                         setTeachers(response.data.data.teachers)
+                        setTotalPages(response.data.data.pagination.total_pages)
+                        setTeachercount(response.data.data.pagination.teacher_count)
+                      
                     }
 
                 } catch (err) {
@@ -49,7 +58,30 @@ const TeacherList = () => {
         } catch (err) {
             console.error("error in teachers list", err)
         }
-    }, [])
+    }, [teacherDelete])
+
+    const handleEdit = (teacher: any) => {
+        try {
+            navigate("/teachers-add", {
+                state: {
+                    teacher: teacher
+                }
+            })
+        } catch (err) {
+            console.error("error in edit teacher", err)
+        }
+    }
+
+    const handleDelete = async (teacher: any) => {
+        try {
+            const response = await deleteTeacher(teacher?._id)
+            if(response){
+                setTeacherDelete(true)
+            }
+        } catch (err) {
+            console.error("error in delete teacher", err)
+        }
+    }
     return (
         <div className="w-full">
 
@@ -321,6 +353,7 @@ const TeacherList = () => {
                           hover:bg-blue-50
                         "
                                                 title="Edit"
+                                                onClick={() => handleEdit(teacher)}
                                             >
                                                 <Pencil size={10} />
                                             </button>
@@ -339,6 +372,7 @@ const TeacherList = () => {
                           hover:bg-red-50
                         "
                                                 title="Delete"
+                                                onClick={() => handleDelete(teacher)}
                                             >
                                                 <Trash2 size={10} />
                                             </button>
@@ -357,7 +391,13 @@ const TeacherList = () => {
 
                 </div>
 
-                <Pagination />
+                <Pagination 
+                
+                totalpages ={Totalpages}
+                page={page}
+                pagesize ={pagesize}
+                teachercount = {Teachercount}
+                />
             </div>
 
         </div>
