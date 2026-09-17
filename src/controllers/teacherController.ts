@@ -11,7 +11,7 @@ export const createTeacher = async (
 
     const result = req.body
     const isExist = await Teacher.findOne({
-      Email: result?.Email
+      mail: result?.mail
     })
     if (isExist) {
       return res.status(409).json(errorResponse("teacher is already exist.."))
