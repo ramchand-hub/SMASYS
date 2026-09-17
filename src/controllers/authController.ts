@@ -53,15 +53,12 @@ export const login = async (
     //   return res.status(401).json(errorResponse("Invalid credentials"));
 
 
-    res.json(
-      successResponse("Login successful"
+    return res.status(200).json(
+      successResponse("Login successful", user
+
       ),
     );
 
-    // Send welcome email in background (do not block login response)
-    await sendLoginWelcomeEmail(user.email, user.name).catch((mailErr) => {
-      console.error("Failed to send login welcome email:", mailErr);
-    });
   } catch (err) {
     next(err);
   }
