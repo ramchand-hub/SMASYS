@@ -6,6 +6,7 @@ import { Request, Response } from "express";
 import logger from "../utils/messages/logger";
 import jwt from "jsonwebtoken";
 import multer_config from "../multer/multer_config";
+import { encrypt } from "../utils/messages/enc_dec";
 const router = Router();
 
 router.post("/register", async (req: Request, res: Response) => {
@@ -42,24 +43,19 @@ router.post("/login", async (req: Request, res: Response) => {
       data: result,
     });
 
-    logger.info(api_res?.response?.data);
-
 
     if (api_res?.statusCode === 200) {
-      const user_id = api_res?.response?.data?.user?._id;
-
-      const token = jwt.sign({ user_id }, config?.JWT_SECRET as string, {
+      const user_id = api_res?.response?.data?._id;
+      const encrypt_id =await encrypt(user_id, config?.encrypt_secret)
+      const token = jwt.sign({ encrypt_id }, config?.JWT_SECRET as string, {
         expiresIn: "1h",
       });
       return send_success(res, api_res?.response?.message, {
-        ...api_res?.response?.data,
-        token,
-      });
-    } else {
-      return send_success(
-        res,
-        api_res?.response?.message,
-        api_res?.response?.data,
+        name: api_res?.response?.data?.name,
+        email: api_res?.response?.data?.email,
+        token
+
+      }
       );
     }
   } catch (error: any) {
@@ -123,67 +119,67 @@ router.post("/update-password", async (req: Request, res: Response) => {
 });
 
 router.post("/uploadfile",
-  multer_config.array("file",20),
-  async (req:Request,res:Response)=>{
-  try{
+  multer_config.array("file", 20),
+  async (req: Request, res: Response) => {
+    try {
 
-    const file = (req as any).files
+      const file = (req as any).files
 
-     const api_res = await axiosHandler({
-      method: "POST",
-      url: `${config?.authentication}/auth/uploadfile`,
-      data: file,
-    });
+      const api_res = await axiosHandler({
+        method: "POST",
+        url: `${config?.authentication}/auth/uploadfile`,
+        data: file,
+      });
 
-    if (api_res?.statusCode === 200) {
-      return send_success(
-        res,
-        api_res?.response?.message,
-        api_res?.response?.data,
-      );
-    } else {
-      return send_success(
-        res,
-        api_res?.response?.message,
-        api_res?.response?.data,
-      );
+      if (api_res?.statusCode === 200) {
+        return send_success(
+          res,
+          api_res?.response?.message,
+          api_res?.response?.data,
+        );
+      } else {
+        return send_success(
+          res,
+          api_res?.response?.message,
+          api_res?.response?.data,
+        );
+      }
+
+    } catch (error: any) {
+      return send_fail(res, error.message);
+
     }
-
-  }catch(error:any){
-    return send_fail(res, error.message);
-
-  }
-})
+  })
 
 router.get("/downloadfile/:id",
-  async (req:Request,res:Response)=>{
-  try{
+  async (req: Request, res: Response) => {
+    try {
 
-    const file_id = req.params.id;
-     const api_res = await axiosHandler({
-      method: "GET",
-      url: `${config?.authentication}/auth/downloadfile/${file_id}`,
-      // data: file,
-    });
+      const file_id = req.params.id;
+      const api_res = await axiosHandler({
+        method: "GET",
+        url: `${config?.authentication}/auth/downloadfile/${file_id}`,
+        // data: file,
+      });
 
-    if (api_res?.statusCode === 200) {
-      return send_success(
-        res,
-        api_res?.response?.message,
-        api_res?.response?.data,
-      );
-    } else {
-      return send_success(
-        res,
-        api_res?.response?.message,
-        api_res?.response?.data,
-      );
+      if (api_res?.statusCode === 200) {
+        return send_success(
+          res,
+          api_res?.response?.message,
+          api_res?.response?.data,
+        );
+      } else {
+        return send_success(
+          res,
+          api_res?.response?.message,
+          api_res?.response?.data,
+        );
+      }
+
+    } catch (error: any) {
+      return send_fail(res, error.message);
+
     }
-
-  }catch(error:any){
-    return send_fail(res, error.message);
-
-  }
-})
+  })
 
 export default router;
