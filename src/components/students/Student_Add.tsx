@@ -1,466 +1,317 @@
-import React, { ReactHTMLElement } from "react";
-import Card from "../../common/Card";
-import Button from "../../common/Button";
-import { useNavigate } from "react-router-dom";
-import { create_student } from "../../Services/Allservice";
-const Student_Add = () => {
-  const navigate = useNavigate();
+import React, { useEffect, useState } from "react";
+import { ChevronDown, Calendar } from "lucide-react";
+import {
+  create_student,
+  update_student
+} from "../../Services/Allservice";
+import {
+  useNavigate,
+  useLocation
+} from "react-router-dom";
 
-  const handleback = () => {
-    navigate("/students");
+const Addstudent = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const student = location.state?.student;
+
+  const [formData, setFormData] = useState({
+    FirstName: "",
+    LastName: "",
+    Class: "",
+    RollNo: "",
+    dob: "",
+    gender: "",
+    address: "",
+  });
+
+  // Populate form when editing
+  useEffect(() => {
+    if (student) {
+      setFormData({
+        FirstName: student.FirstName || "",
+        LastName: student.LastName || "",
+        Class: student.Class || "",
+        RollNo: student.RollNo || "",
+        dob: student.dob || "",
+        gender: student.gender || "",
+        address: student.address || "",
+      });
+    }
+  }, [student]);
+
+  // Common change handler
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
+  ) => {
+    const { name, value } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
-  const Studentadd = async (e: React.FormEvent<HTMLFormElement>) => {
+  // Create / Update
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
-      const formData = new FormData(e.currentTarget);
+      let response;
 
-      const data = Object.fromEntries(formData.entries());
-      const payload = data;
-      const response = await create_student(payload);
-      if(response.status === 200){
-        navigate("/students")
+      if (student) {
+        // EDIT
+        response = await update_student(
+          student._id,
+          formData
+        );
+      } else {
+        // CREATE
+        response = await create_student(formData);
       }
+
+      if (response) {
+        navigate("/students");
+      }
+
     } catch (err) {
-      console.error(err);
+      console.error("Error in student submit:", err);
     }
   };
 
   return (
-    <>
-      <Button type="button" onClick={handleback}>
-        Back
-      </Button>
-      <form onSubmit={Studentadd}>
-        <div className="flex justify-end gap-3 mb-4">
-          <Button type="button">Cancel</Button>
-          <Button type="button">reset</Button>
-          <Button type="submit">Save</Button>
-        </div>
+    <div className="w-full max-w-4xl rounded-lg border border-slate-200 bg-white">
 
-        <div className="grid grid-cols-12 gap-6">
-          <div className="col-span-7">
-            <Card title="Basic Information" className="mb-4">
-              <div className="grid grid-cols-2 gap-6">
-                {/* Left Side */}
-                <div className="space-y-5">
-                  {/* First Name */}
-                  <div>
-                    <label className="block text-[18px] font-medium text-gray-800 mb-2">
-                      First Name
-                    </label>
+      {/* Form Header */}
+      <div className="border-b border-slate-200 px-6 py-4">
+        <h2 className="text-sm font-semibold text-slate-700">
+          {student ? "Edit student" : "student Information"}
+        </h2>
+      </div>
 
-                    <input
-                      type="text"
-                      placeholder="First Name"
-                      className="w-full h-11 border border-gray-300 rounded-lg px-3 outline-none focus:ring-2 focus:ring-blue-500"
-                      name="first_name"
-                    />
-                  </div>
+      <form onSubmit={handleSubmit}>
 
-                  {/* Gender */}
-                  <div>
-                    <label className="block text-[18px] font-medium text-gray-800 mb-3">
-                      Gender
-                    </label>
+        {/* Form Body */}
+        <div className="p-6">
 
-                    <div className="flex items-center gap-10">
-                      <label className="flex items-center gap-2 cursor-pointer">
-                        <input
-                          type="radio"
-                          name="gender"
-                          className="accent-blue-600"
-                          value="male"
-                          defaultChecked
-                        />
-                        <span>Male</span>
-                      </label>
+          {/* Row 1 */}
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
 
-                      <label className="flex items-center gap-2 cursor-pointer">
-                        <input
-                          type="radio"
-                          name="gender"
-                          value="female"
-                          className="accent-blue-600"
-                        />
-                        <span>Female</span>
-                      </label>
-                    </div>
-                  </div>
+            {/* Name */}
+            <div>
+              <label className="mb-2 block text-xs font-medium text-slate-600">
+                First Name <span className="text-red-500">*</span>
+              </label>
 
-                  {/* Date of Birth */}
-                  <div>
-                    <label className="block text-[18px] font-medium text-gray-800 mb-2">
-                      Date of Birth
-                    </label>
+              <input
+                type="text"
+                name="firstname"
+                value={formData.FirstName}
+                onChange={handleChange}
+                placeholder="Enter first name"
+                className="h-10 w-full rounded-md border border-slate-200 px-3 text-sm outline-none placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              />
+            </div>
 
-                    <input
-                      type="date"
-                      className="w-full h-11 border border-gray-300 rounded-lg px-3 outline-none"
-                      name="dob"
-                    />
-                  </div>
+            {/* Last Name */}
+            <div>
+              <label className="mb-2 block text-xs font-medium text-slate-600">
+                Last Name <span className="text-red-500">*</span>
+              </label>
 
-                  {/* Class & Section */}
-                  <div className="grid grid-cols-2 gap-3">
-                    <select
-                      className="h-11 border border-gray-300 rounded-lg px-3 bg-[#F5F3FF]"
-                      name="class"
-                    >
-                      <option>Class</option>
-                      <option>Class 1</option>
-                      <option>Class 2</option>
-                    </select>
+              <input
+                type="text"
+                name="lastname"
+                value={formData.LastName}
+                onChange={handleChange}
+                placeholder="Enter last name"
+                className="h-10 w-full rounded-md border border-slate-200 px-3 text-sm outline-none placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              />
+            </div>
 
-                    <select
-                      className="h-11 border border-gray-300 rounded-lg px-3 bg-[#F5F3FF]"
-                      name="section"
-                    >
-                      <option>Section</option>
-                      <option>A</option>
-                      <option>B</option>
-                    </select>
-                  </div>
-                </div>
-
-                {/* Right Side */}
-                <div className="space-y-5">
-                  {/* Last Name */}
-                  <div>
-                    <label className="block text-[18px] font-medium text-gray-800 mb-2">
-                      Last Name
-                    </label>
-
-                    <input
-                      type="text"
-                      placeholder="Last Name"
-                      className="w-full h-11 border border-gray-300 rounded-lg px-3 outline-none focus:ring-2 focus:ring-blue-500"
-                      name="last_name"
-                    />
-                  </div>
-
-                  {/* Upload */}
-                  <div className="border-2 border-dashed border-gray-300 rounded-xl h-[235px] flex flex-col items-center justify-center">
-                    <div className="w-16 h-16 rounded-2xl border flex items-center justify-center text-3xl">
-                      📄
-                    </div>
-
-                    <p className="mt-5 text-gray-700">
-                      Drop your files to upload
-                    </p>
-
-                    <button className="mt-4 px-6 py-2 border rounded-full text-sm hover:bg-gray-100">
-                      Select files
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </Card>
-
-            <Card title="Parent Details" className="mb-4">
-              <div className="grid grid-cols-2 gap-6">
-                {/* Left Side */}
-                <div className="space-y-5">
-                  <div>
-                    <label className="block text-[18px] font-medium text-gray-800 mb-2">
-                      Father Name
-                    </label>
-
-                    <input
-                      type="text"
-                      placeholder="Father Name"
-                      className="w-full h-11 border border-gray-300 rounded-lg px-3 outline-none focus:ring-2 focus:ring-blue-500"
-                      name="father_name"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-[18px] font-medium text-gray-800 mb-2">
-                      Father Contact
-                    </label>
-
-                    <input
-                      type="text"
-                      placeholder="Father Contact"
-                      className="w-full h-11 border border-gray-300 rounded-lg px-3 outline-none focus:ring-2 focus:ring-blue-500"
-                      name="father_contact"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-[18px] font-medium text-gray-800 mb-2">
-                      Father Occupation
-                    </label>
-
-                    <input
-                      type="text"
-                      placeholder="Father Occupation"
-                      className="w-full h-11 border border-gray-300 rounded-lg px-3 outline-none focus:ring-2 focus:ring-blue-500"
-                      name="father_occupation"
-                    />
-                  </div>
-                </div>
-
-                {/* Right Side */}
-                <div className="space-y-5">
-                  {/* Last Name */}
-                  <div>
-                    <label className="block text-[18px] font-medium text-gray-800 mb-2">
-                      Mother Name
-                    </label>
-
-                    <input
-                      type="text"
-                      placeholder="Mother Name"
-                      className="w-full h-11 border border-gray-300 rounded-lg px-3 outline-none focus:ring-2 focus:ring-blue-500"
-                      name="mother_name"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[18px] font-medium text-gray-800 mb-2">
-                      Mother Contact
-                    </label>
-
-                    <input
-                      type="text"
-                      placeholder="Mother Contact"
-                      className="w-full h-11 border border-gray-300 rounded-lg px-3 outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[18px] font-medium text-gray-800 mb-2">
-                      Annual Income
-                    </label>
-
-                    <input
-                      type="text"
-                      placeholder="1,00,000"
-                      className="w-full h-11 border border-gray-300 rounded-lg px-3 outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                </div>
-              </div>
-            </Card>
           </div>
 
-          <div className="col-span-5">
-            <Card title="Login/Account Details" className="mb-4">
-              <div className="grid grid-cols-2 gap-6">
-                {/* Left Side */}
-                <div className="space-y-5">
-                  <div>
-                    <label className="block text-[18px] font-medium text-gray-800 mb-2">
-                      User Name
-                    </label>
+          {/* Row 2 */}
+          <div className="mt-5 grid grid-cols-1 gap-5 md:grid-cols-2">
 
-                    <input
-                      type="text"
-                      placeholder="First Name"
-                      className="w-full h-11 border border-gray-300 rounded-lg px-3 outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                </div>
 
-                {/* Right Side */}
-                <div className="space-y-5">
-                  {/* Last Name */}
-                  <div>
-                    <label className="block text-[18px] font-medium text-gray-800 mb-2">
-                      Password
-                    </label>
 
-                    <input
-                      type="text"
-                      placeholder="Last Name"
-                      className="w-full h-11 border border-gray-300 rounded-lg px-3 outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                </div>
+            {/* class */}
+            <div>
+              <label className="mb-2 block text-xs font-medium text-slate-600">
+                Class <span className="text-red-500">*</span>
+              </label>
+
+              <div className="relative">
+                <select
+                  name="class"
+                  value={formData.Class}
+                  onChange={handleChange}
+                  className="h-10 w-full appearance-none rounded-md border border-slate-200 bg-white px-3 pr-10 text-sm text-slate-500 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                >
+                  <option value="">Select Class</option>
+                  <option value="class1">1st Class</option>
+                  <option value="class1">2nd Class</option>
+                  <option value="class1">3rd Class</option>
+                  <option value="class1">4th Class</option>
+                  <option value="class1">5th Class</option>
+                  <option value="class1">6th Class</option>
+                  <option value="class1">7th Class</option>
+                  <option value="class1">8th Class</option>
+                  <option value="class1">9th Class</option>
+                  <option value="class1">10th Class</option>
+
+                </select>
+
+                <ChevronDown
+                  size={16}
+                  className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"
+                />
               </div>
-            </Card>
+            </div>
 
-            <Card title="Contact Information" className="mb-4">
-              <div className="grid grid-cols-2 gap-6">
-                {/* Left Side */}
-                <div className="space-y-5">
-                  <div>
-                    <label className="block text-[18px] font-medium text-gray-800 mb-2">
-                      Phone
-                    </label>
+            {/* roll number */}
+            <div>
+              <label className="mb-2 block text-xs font-medium text-slate-600">
+                Roll No <span className="text-red-500">*</span>
+              </label>
 
-                    <input
-                      type="text"
-                      placeholder="Contact number"
-                      className="w-full h-11 border border-gray-300 rounded-lg px-3 outline-none focus:ring-2 focus:ring-blue-500"
-                      name="student_phone"
-                    />
-                  </div>
-                </div>
+              <input
+                type="text"
+                name="rollno"
+                value={formData.RollNo}
+                onChange={handleChange}
+                placeholder="Enter phone number"
+                className="h-10 w-full rounded-md border border-slate-200 px-3 text-sm outline-none placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              />
+            </div>
 
-                {/* Right Side */}
-                <div className="space-y-5">
-                  {/* Last Name */}
-                  <div>
-                    <label className="block text-[18px] font-medium text-gray-800 mb-2">
-                      Email
-                    </label>
-
-                    <input
-                      type="text"
-                      placeholder="example@gmail.com"
-                      className="w-full h-11 border border-gray-300 rounded-lg px-3 outline-none focus:ring-2 focus:ring-blue-500"
-                      name="student_mail"
-                    />
-                  </div>
-                </div>
-              </div>
-            </Card>
-
-            <Card title="Contact Information" className="mb-4">
-              <div className="grid grid-cols-1">
-                <div className="space-y-5">
-                  <div>
-                    <label className="block text-[18px] font-medium text-gray-800 mb-2">
-                      Address
-                    </label>
-
-                    <input
-                      type="text"
-                      placeholder="Area and Street"
-                      className="w-full h-11 border border-gray-300 rounded-lg px-3 outline-none focus:ring-2 focus:ring-blue-500"
-                      name="address"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-6">
-                {/* Left Side */}
-                <div className="space-y-5">
-                  <div>
-                    <label className="block text-[18px] font-medium text-gray-800 mb-2">
-                      Location
-                    </label>
-
-                    <input
-                      type="text"
-                      placeholder="Location"
-                      className="w-full h-11 border border-gray-300 rounded-lg px-3 outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                </div>
-
-                {/* Right Side */}
-                <div className="space-y-5">
-                  {/* Last Name */}
-                  <div>
-                    <label className="block text-[18px] font-medium text-gray-800 mb-2">
-                      District
-                    </label>
-
-                    <input
-                      type="text"
-                      placeholder="District"
-                      className="w-full h-11 border border-gray-300 rounded-lg px-3 outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                </div>
-
-                {/* Left Side */}
-                <div className="space-y-5">
-                  <div>
-                    <label className="block text-[18px] font-medium text-gray-800 mb-2">
-                      Pincode
-                    </label>
-
-                    <input
-                      type="text"
-                      placeholder="Pincode"
-                      className="w-full h-11 border border-gray-300 rounded-lg px-3 outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                </div>
-
-                {/* Right Side */}
-                <div className="space-y-5">
-                  {/* Last Name */}
-                  <div>
-                    <label className="block text-[18px] font-medium text-gray-800 mb-2">
-                      State
-                    </label>
-
-                    <input
-                      type="text"
-                      placeholder="State"
-                      className="w-full h-11 border border-gray-300 rounded-lg px-3 outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                </div>
-              </div>
-            </Card>
-            <Card
-              title="Additional Information"
-              className="mb-4 border-b border-gray-200"
-            >
-              <div className="grid grid-cols-1">
-                <div className="rounded-2xl bg-white overflow-hidden shadow-sm">
-                  {/* Options */}
-                  <div className="px-4 py-4">
-                    <div className="flex flex-wrap gap-3">
-                      <label className="inline-flex items-center gap-2 px-3 py-1 border border-gray-700 rounded-full cursor-pointer">
-                        <input
-                          type="radio"
-                          name="student_type"
-                          value="scholler"
-                          className="accent-blue-500"
-                        />
-                        <span className="text-sm text-gray-800">
-                          Day Scholler
-                        </span>
-                      </label>
-
-                      <label className="inline-flex items-center gap-2 px-3 py-1 border border-gray-700 rounded-full cursor-pointer">
-                        <input
-                          type="radio"
-                          name="student_type"
-                          value="hosteller"
-                          className="accent-blue-500"
-                        />
-                        <span className="text-sm text-gray-800">Hosteller</span>
-                      </label>
-
-                      <label className="inline-flex items-center gap-2 px-3 py-1 border border-gray-700 rounded-full cursor-pointer">
-                        <input
-                          type="radio"
-                          name="student_type"
-                          value="transport"
-                          className="accent-blue-500"
-                        />
-                        <span className="text-sm text-gray-800">Transport</span>
-                      </label>
-
-                      <label className="inline-flex items-center gap-2 px-3 py-1 border border-gray-700 rounded-full cursor-pointer">
-                        <input
-                          type="radio"
-                          name="student_type"
-                          value="non-transport"
-                          className="accent-blue-500"
-                        />
-                        <span className="text-sm text-gray-800">
-                          Non Transport
-                        </span>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </Card>
           </div>
+
+          {/* Row 3 */}
+          <div className="mt-5 grid grid-cols-1 gap-5 md:grid-cols-2">
+
+
+            {/* date of birth */}
+            <div>
+              <label className="mb-2 block text-xs font-medium text-slate-600">
+                Date of Birth
+              </label>
+              <div className="relative">
+                <input
+                  type="date"
+                  name="dob"
+                  value={formData.dob}
+                  onChange={handleChange}
+                  className="h-10 w-full rounded-md border border-slate-200 px-3 pr-10 text-sm outline-none"
+                />
+
+
+              </div>
+            </div>
+
+            {/* Gender */}
+            <div>
+              <label className="mb-3 block text-xs font-medium text-slate-600">
+                Gender <span className="text-red-500">*</span>
+              </label>
+
+              <div className="flex items-center gap-6">
+
+                <label className="flex cursor-pointer items-center gap-2">
+                  <input
+                    type="radio"
+                    name="gender"
+                    value="male"
+                    checked={formData.gender === "male"}
+                    onChange={handleChange}
+                    className="h-4 w-4 accent-blue-600"
+                  />
+
+                  <span className="text-sm text-slate-600">
+                    Male
+                  </span>
+                </label>
+
+                <label className="flex cursor-pointer items-center gap-2">
+                  <input
+                    type="radio"
+                    name="gender"
+                    value="female"
+                    checked={formData.gender === "female"}
+                    onChange={handleChange}
+                    className="h-4 w-4 accent-blue-600"
+                  />
+
+                  <span className="text-sm text-slate-600">
+                    Female
+                  </span>
+                </label>
+
+                <label className="flex cursor-pointer items-center gap-2">
+                  <input
+                    type="radio"
+                    name="gender"
+                    value="other"
+                    checked={formData.gender === "other"}
+                    onChange={handleChange}
+                    className="h-4 w-4 accent-blue-600"
+                  />
+
+                  <span className="text-sm text-slate-600">
+                    Other
+                  </span>
+                </label>
+
+              </div>
+            </div>
+
+
+          </div>
+
+          {/* Address */}
+          <div className="mt-5">
+            <label className="mb-2 block text-xs font-medium text-slate-600">
+              Address
+            </label>
+
+            <textarea
+              rows={4}
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+              placeholder="Enter address"
+              className="w-full resize-none rounded-md border border-slate-200 px-3 py-2.5 text-sm outline-none placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+            />
+          </div>
+
         </div>
+
+        {/* Form Footer */}
+        <div className="flex justify-end gap-3 border-t border-slate-200 px-6 py-4">
+
+          <button
+            type="button"
+            onClick={() => navigate("/students")}
+            className="rounded-md border border-slate-200 bg-white px-5 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="submit"
+            className="rounded-md bg-blue-600 px-5 py-2 text-sm font-medium text-white hover:bg-blue-700"
+          >
+            {student ? "Update student" : "Save student"}
+          </button>
+
+        </div>
+
       </form>
-    </>
+    </div>
   );
 };
 
-export default Student_Add;
+export default Addstudent;

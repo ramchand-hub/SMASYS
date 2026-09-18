@@ -33,10 +33,39 @@ export async function create_student(data: any): Promise<any> {
 	}
 }
 
-export async function studentList(): Promise<any> {
+export async function update_student(studentId: string, data: any): Promise<any> {
 	try {
-		const response = await api.get('/students/getStudentsList');
-		console.log(response, "studentList response!!")
+		const response = await api.post('/students/updateStudent', data);
+		console.log(response, "update_student response!!")
+		return response;
+	} catch (error) {
+		console.error("update_student API error:", error);
+		throw error;
+	}
+}
+
+export async function deleteStudent(studentId: string): Promise<any> {
+	try {
+		const response = await api.delete(`/students/deleteStudent/${studentId}`,
+		);
+		return response;
+	} catch (error) {
+		console.error("deleteStudent API error:", error);
+		throw error;
+	}
+}
+
+export async function studentList(page: any, pagesize: any): Promise<any> {
+	try {
+		const response = await api.get('/students/getStudentsList',
+			{
+				params: {
+					page,
+					pagesize
+				}
+
+			}
+		);
 		return response.data;
 	} catch (error) {
 		console.error("studentList API error:", error);
@@ -72,7 +101,7 @@ export async function teachersList(page: any, pagesize: any): Promise<any> {
 	}
 }
 
-export async function updateTeacher(teacherId:string, data:any): Promise<any> {
+export async function updateTeacher(teacherId: string, data: any): Promise<any> {
 	try {
 		const response = await api.put(`/teachers/updateTeacher/${teacherId}`, data
 		);
@@ -83,7 +112,7 @@ export async function updateTeacher(teacherId:string, data:any): Promise<any> {
 	}
 }
 
-export async function deleteTeacher(teacherId:string): Promise<any> {
+export async function deleteTeacher(teacherId: string): Promise<any> {
 	try {
 		const response = await api.delete(`/teachers/deleteTeacher/${teacherId}`,
 		);
