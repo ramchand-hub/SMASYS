@@ -1,10 +1,9 @@
 import { Request, Response, NextFunction } from "express";
 import User from "../models/User";
-import jwt from "jsonwebtoken";
 import { successResponse, errorResponse } from "../utils/messages";
 import { sendLoginWelcomeEmail } from "../utils/mailer";
-import  upload  from "../models/file";
-
+import upload from "../models/file";
+const bcrypt = require("bcrypt");
 
 export const register = async (
   req: Request,
@@ -13,15 +12,17 @@ export const register = async (
 ) => {
   try {
     const { name, email, password } = req.body;
+
     if (!name || !email || !password)
       return res
         .status(400)
         .json(errorResponse("Email and password  and name is required"));
 
-    const user = await User.create({ name, email, password });
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await User.create({ name, email, password: hashedPassword });
 
     return res.json(
-      successResponse("user registered successfully..", {email:user?.email, name:user?.name}),
+      successResponse("user registered successfully..", { email: user?.email, name: user?.name }),
     );
   } catch (err: any) {
     if (err.code === 11000) {
@@ -45,12 +46,11 @@ export const login = async (
       return res.status(400).json(errorResponse("Email and password required"));
 
     const user = await User.findOne({ email });
-    console.log("Login attempt for email:", email, "Found user:", user);
     if (!user)
       return res.status(401).json(errorResponse("Invalid credentials"));
-    // const valid = await bcrypt.compare(password, );
-    // if (!valid)
-    //   return res.status(401).json(errorResponse("Invalid credentials"));
+    const valid = await bcrypt.compare(password, user.password);
+    if (!valid)
+      return res.status(401).json(errorResponse("Invalid credentials"));
 
 
     return res.status(200).json(
@@ -106,10 +106,10 @@ export const update_password = async (
       },
     });
 
-    if(user_mail?.password === newpassword){
-     return res.json(successResponse("password updated alreday",{}))
-    }else{
-    return res.json(successResponse("password updated successfully", {}));
+    if (user_mail?.password === newpassword) {
+      return res.json(successResponse("password updated alreday", {}))
+    } else {
+      return res.json(successResponse("password updated successfully", {}));
 
     }
 
@@ -130,31 +130,31 @@ export const upload_file = async (
         .status(400)
         .json(errorResponse("File is required.."));
     const user_file = await upload.insertMany(
-      file.map((item)=>({
-          originalname: item.originalname,
-       filename: item.filename,
-     mimeType: item.mimetype,
-       size: item.size,
-       path: item.path,
+      file.map((item) => ({
+        originalname: item.originalname,
+        filename: item.filename,
+        mimeType: item.mimetype,
+        size: item.size,
+        path: item.path,
       })
-      
+
       )
-  //     {
-  //     originalname: file.originalname,
-  //     filename: file.filename,
-  //     mimeType: file.mimetype,
-  //     size: file.size,
-  //     path: file.path,
-  // }
-)
+      //     {
+      //     originalname: file.originalname,
+      //     filename: file.filename,
+      //     mimeType: file.mimetype,
+      //     size: file.size,
+      //     path: file.path,
+      // }
+    )
     if (!user_file) {
       return res.status(401).json(errorResponse("file is not found!!"));
-    }else{
+    } else {
       return res.status(201).json({
-      success: true,
-      message: "File uploaded successfully.",
-      data: user_file,
-    });
+        success: true,
+        message: "File uploaded successfully.",
+        data: user_file,
+      });
     }
 
   } catch (err) {
@@ -174,16 +174,16 @@ export const download_file = async (
         .status(400)
         .json(errorResponse("File is required.."));
 
-        const file_id = await upload.findById(file);
-        
+    const file_id = await upload.findById(file);
+
     if (!file_id) {
       return res.status(401).json(errorResponse("file is not found!!"));
-    }else{
+    } else {
       return res.status(200).json({
-      success: true,
-      message: "File downloaded successfully.",
-      data: file_id,
-    });
+        success: true,
+        message: "File downloaded successfully.",
+        data: file_id,
+      });
     }
 
   } catch (err) {
