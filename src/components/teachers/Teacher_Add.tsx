@@ -73,7 +73,12 @@ const AddTeacher = () => {
       }
 
       if (response) {
-        navigate("/Teachers");
+        navigate("/Teachers", {
+          state: {
+            toast_message: response?.data?.toast_message,
+            toast_type: "success"
+          }
+        });
       }
 
     } catch (err) {

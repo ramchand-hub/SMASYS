@@ -9,19 +9,36 @@ import {
     ChevronRight,
 } from "lucide-react";
 import Pagination from "../../common/Pagination";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { deleteTeacher, teachersList } from "../../Services/Allservice";
+import Toaster from "../../common/toaster";
 
+type ToastType = "success" | "error" | "warning" | "info";
 
 const TeacherList = () => {
 
     const navigate = useNavigate()
+    const location = useLocation()
     const [teachers, setTeachers] = useState<any[]>([])
     const [teacherDelete, setTeacherDelete] = useState<boolean>(false)
     const [Totalpages, setTotalPages] = useState<number>()
     const [Teachercount, setTeachercount] = useState()
     const page = 1
     const pagesize = 5
+    const [showtoast, setShowtoast] = useState(false)
+    const [toast_message, setToastmessage] = useState("")
+    const [toast_type, setToasttype] = useState<ToastType>("success")
+
+    useEffect(() => {
+        if (location.state?.toast_message) {
+            setToastmessage(location?.state?.toast_message);
+            setToasttype(location.state?.toast_type);
+            setShowtoast(true);
+
+            // Clear navigation state
+            window.history.replaceState({}, document.title);
+        }
+    }, [location?.state])
 
     const addteacher = () => {
         try {
@@ -41,11 +58,11 @@ const TeacherList = () => {
 
                     }
                     const response = await teachersList(payload.page, payload.pagesize)
-                    if (response !==null || undefined) {
+                    if (response !== null || undefined) {
                         setTeachers(response.data.data.teachers)
                         setTotalPages(response.data.data.pagination.total_pages)
                         setTeachercount(response.data.data.pagination.teacher_count)
-                      
+
                     }
 
                 } catch (err) {
@@ -75,8 +92,11 @@ const TeacherList = () => {
     const handleDelete = async (teacher: any) => {
         try {
             const response = await deleteTeacher(teacher?._id)
-            if(response){
+            if (response) {
                 setTeacherDelete(true)
+                setShowtoast(true)
+                setToastmessage(response?.data?.message)
+                setToasttype("success")
             }
         } catch (err) {
             console.error("error in delete teacher", err)
@@ -391,13 +411,25 @@ const TeacherList = () => {
 
                 </div>
 
-                <Pagination 
-                
-                totalpages ={Totalpages}
-                page={page}
-                pagesize ={pagesize}
-                count = {Teachercount}
+                <Pagination
+
+                    totalpages={Totalpages}
+                    page={page}
+                    pagesize={pagesize}
+                    count={Teachercount}
                 />
+                {
+                    showtoast && (
+                        <Toaster
+
+                            toast_message={toast_message}
+                            onClose={() => setShowtoast(false)}
+                            type={toast_type}
+
+                        />
+                    )
+                }
+
             </div>
 
         </div>
