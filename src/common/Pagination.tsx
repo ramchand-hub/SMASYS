@@ -11,7 +11,7 @@ interface paginate {
   count: any
   next: () => void;
   previous: () => void;
-  totalpages:any
+  totalpages: any
 }
 const Pagination: React.FC<paginate> = ({
   count,
@@ -57,11 +57,11 @@ const Pagination: React.FC<paginate> = ({
                 text-slate-400
                 hover:bg-slate-50
               "
-               onClick={previous}
-               disabled={page === 1}
+          onClick={previous}
+          disabled={page === 1}
         >
           <ChevronLeft size={10}
-           
+
 
           />
         </button>
@@ -98,11 +98,11 @@ const Pagination: React.FC<paginate> = ({
                 text-slate-400
                 hover:bg-slate-50
               "
-               onClick={next}
-               disabled={page >= totalpages}
+          onClick={next}
+          disabled={page >= totalpages}
         >
           <ChevronRight size={10}
-           
+
           />
         </button>
 
