@@ -8,16 +8,16 @@ interface paginate {
   totalpages: number | undefined
   page: number 
   pagesize: number
-  teachercount: any
+  count: any
 }
 const Pagination: React.FC<paginate> = ({
   totalpages,
-  teachercount,
+  count,
   page,
   pagesize
 }) => {
   const start = (page -1) * pagesize + 1
-  const end = Math.min(page * pagesize, teachercount)
+  const end = Math.min(page * pagesize, count)
   return (
     <div
       className="
@@ -32,7 +32,7 @@ const Pagination: React.FC<paginate> = ({
     >
 
       <p className="text-[8px] text-slate-400">
-        Showing {start} to {end} of {teachercount}
+        Showing {start} to {end} of {count}
       </p>
 
 

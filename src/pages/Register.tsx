@@ -27,7 +27,7 @@ export default function Register() {
         email: formData.email,
         password: formData.password,
       };
-
+      
       const responseData = await createUser(payload);
       if (responseData && responseData?.success === true) {
         setIsLogin(!isLogin);
@@ -54,11 +54,8 @@ export default function Register() {
       };
 
       const Response = await loginUser(payload);
-      console.log(Response, "login response...");
-
       if (Response && Response.success === true) {
-        // userlogin(Response.success)
-        localStorage.setItem("token", Response.token);
+        sessionStorage.setItem("token", Response.data.token)
         navigate("/Dashboard");
       }
     } catch (error) {

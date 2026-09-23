@@ -396,7 +396,7 @@ const TeacherList = () => {
                 totalpages ={Totalpages}
                 page={page}
                 pagesize ={pagesize}
-                teachercount = {Teachercount}
+                count = {Teachercount}
                 />
             </div>
 

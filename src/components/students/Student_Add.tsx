@@ -14,12 +14,13 @@ const Addstudent = () => {
   const location = useLocation();
 
   const student = location.state?.student;
-
+  console.log(student,'student data...')
+  
   const [formData, setFormData] = useState({
-    FirstName: "",
-    LastName: "",
-    Class: "",
-    RollNo: "",
+    first_name: "",
+    last_name: "",
+    class: "",
+    rollno: "",
     dob: "",
     gender: "",
     address: "",
@@ -29,10 +30,10 @@ const Addstudent = () => {
   useEffect(() => {
     if (student) {
       setFormData({
-        FirstName: student.FirstName || "",
-        LastName: student.LastName || "",
-        Class: student.Class || "",
-        RollNo: student.RollNo || "",
+        first_name: student.first_name || "",
+        last_name: student.last_name || "",
+        class: student.class || "",
+        rollno: student.rollno || "",
         dob: student.dob || "",
         gender: student.gender || "",
         address: student.address || "",
@@ -87,7 +88,7 @@ const Addstudent = () => {
       {/* Form Header */}
       <div className="border-b border-slate-200 px-6 py-4">
         <h2 className="text-sm font-semibold text-slate-700">
-          {student ? "Edit student" : "student Information"}
+          {student ? "Edit Student" : "Student Information"}
         </h2>
       </div>
 
@@ -102,31 +103,31 @@ const Addstudent = () => {
             {/* Name */}
             <div>
               <label className="mb-2 block text-xs font-medium text-slate-600">
-                First Name <span className="text-red-500">*</span>
+                First_Name <span className="text-red-500">*</span>
               </label>
 
               <input
                 type="text"
-                name="firstname"
-                value={formData.FirstName}
+                name="first_name"
+                value={formData.first_name}
                 onChange={handleChange}
-                placeholder="Enter first name"
+                placeholder="Enter full name"
                 className="h-10 w-full rounded-md border border-slate-200 px-3 text-sm outline-none placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
               />
             </div>
 
-            {/* Last Name */}
+            {/* Lastname */}
             <div>
               <label className="mb-2 block text-xs font-medium text-slate-600">
-                Last Name <span className="text-red-500">*</span>
+                Last_name <span className="text-red-500">*</span>
               </label>
 
               <input
                 type="text"
-                name="lastname"
-                value={formData.LastName}
+                name="last_name"
+                value={formData.last_name}
                 onChange={handleChange}
-                placeholder="Enter last name"
+                placeholder="Enter email"
                 className="h-10 w-full rounded-md border border-slate-200 px-3 text-sm outline-none placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
               />
             </div>
@@ -136,32 +137,27 @@ const Addstudent = () => {
           {/* Row 2 */}
           <div className="mt-5 grid grid-cols-1 gap-5 md:grid-cols-2">
 
+            {/* Class */}
 
-
-            {/* class */}
             <div>
               <label className="mb-2 block text-xs font-medium text-slate-600">
-                Class <span className="text-red-500">*</span>
+                class <span className="text-red-500">*</span>
               </label>
 
               <div className="relative">
                 <select
                   name="class"
-                  value={formData.Class}
+                  value={formData.class}
                   onChange={handleChange}
                   className="h-10 w-full appearance-none rounded-md border border-slate-200 bg-white px-3 pr-10 text-sm text-slate-500 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                 >
                   <option value="">Select Class</option>
-                  <option value="class1">1st Class</option>
-                  <option value="class1">2nd Class</option>
-                  <option value="class1">3rd Class</option>
-                  <option value="class1">4th Class</option>
-                  <option value="class1">5th Class</option>
-                  <option value="class1">6th Class</option>
-                  <option value="class1">7th Class</option>
-                  <option value="class1">8th Class</option>
-                  <option value="class1">9th Class</option>
-                  <option value="class1">10th Class</option>
+                  <option value="class1">class1</option>
+                  <option value="class2">class2</option>
+                  <option value="class3">class3</option>
+                  <option value="class4">class4</option>
+                  <option value="class5">class5</option>
+
 
                 </select>
 
@@ -172,44 +168,40 @@ const Addstudent = () => {
               </div>
             </div>
 
-            {/* roll number */}
+
             <div>
               <label className="mb-2 block text-xs font-medium text-slate-600">
-                Roll No <span className="text-red-500">*</span>
+                Rollno <span className="text-red-500">*</span>
               </label>
 
               <input
                 type="text"
                 name="rollno"
-                value={formData.RollNo}
+                value={formData.rollno}
                 onChange={handleChange}
-                placeholder="Enter phone number"
+                placeholder="Enter Roll"
                 className="h-10 w-full rounded-md border border-slate-200 px-3 text-sm outline-none placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
               />
             </div>
-
           </div>
 
           {/* Row 3 */}
           <div className="mt-5 grid grid-cols-1 gap-5 md:grid-cols-2">
 
-
-            {/* date of birth */}
+            {/* Dob */}
             <div>
               <label className="mb-2 block text-xs font-medium text-slate-600">
-                Date of Birth
+                Dob
               </label>
-              <div className="relative">
-                <input
-                  type="date"
-                  name="dob"
-                  value={formData.dob}
-                  onChange={handleChange}
-                  className="h-10 w-full rounded-md border border-slate-200 px-3 pr-10 text-sm outline-none"
-                />
 
-
-              </div>
+              <input
+                type="date"
+                name="dob"
+                value={formData.dob}
+                onChange={handleChange}
+                placeholder="Enter dob"
+                className="h-10 w-full rounded-md border border-slate-200 px-3 text-sm outline-none placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              />
             </div>
 
             {/* Gender */}
@@ -238,7 +230,7 @@ const Addstudent = () => {
                 <label className="flex cursor-pointer items-center gap-2">
                   <input
                     type="radio"
-                    name="gender"
+                    name="Gender"
                     value="female"
                     checked={formData.gender === "female"}
                     onChange={handleChange}
@@ -253,7 +245,7 @@ const Addstudent = () => {
                 <label className="flex cursor-pointer items-center gap-2">
                   <input
                     type="radio"
-                    name="gender"
+                    name="Gender"
                     value="other"
                     checked={formData.gender === "other"}
                     onChange={handleChange}
@@ -267,6 +259,7 @@ const Addstudent = () => {
 
               </div>
             </div>
+
 
 
           </div>

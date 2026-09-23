@@ -16,10 +16,10 @@ import { deleteStudent, studentList } from "../../Services/Allservice";
 const TeacherList = () => {
 
   const navigate = useNavigate()
-  const [student, setstudent] = useState<any[]>([])
-  const [teacherDelete, setTeacherDelete] = useState<boolean>(false)
+  const [students, setstudents] = useState<any[]>([])
+  const [studentdelete, setStudentDelete] = useState<boolean>(false)
   const [Totalpages, setTotalPages] = useState<number>()
-  const [Teachercount, setTeachercount] = useState()
+  const [studentcount, setStudentcount] = useState<any>()
   const page = 1
   const pagesize = 5
 
@@ -41,10 +41,12 @@ const TeacherList = () => {
 
           }
           const response = await studentList(payload.page, payload.pagesize)
-          if (response !== null || undefined) {
-            setstudent(response.data.data.student)
-            setTotalPages(response.data.data.pagination.total_pages)
-            setTeachercount(response.data.data.pagination.teacher_count)
+          console.log(response.data, "studentlist")
+
+          if (response) {
+            setstudents(response?.data?.students)
+            setTotalPages(response?.data?.pagination?.Totalpages)
+            setStudentcount(response?.data?.pagination?.students_count)
 
           }
 
@@ -58,13 +60,13 @@ const TeacherList = () => {
     } catch (err) {
       console.error("error in student list", err)
     }
-  }, [teacherDelete])
+  }, [studentdelete])
 
-  const handleEdit = (teacher: any) => {
+  const handleEdit = (student: any) => {
     try {
       navigate("/student-add", {
         state: {
-          teacher: teacher
+          student: student
         }
       })
     } catch (err) {
@@ -72,14 +74,14 @@ const TeacherList = () => {
     }
   }
 
-  const handleDelete = async (teacher: any) => {
+  const handleDelete = async (student: any) => {
     try {
-      const response = await deleteStudent(teacher?._id)
+      const response = await deleteStudent(student?._id)
       if (response) {
-        setTeacherDelete(true)
+        setStudentDelete(true)
       }
     } catch (err) {
-      console.error("error in delete teacher", err)
+      console.error("error in delete student", err)
     }
   }
   return (
@@ -233,23 +235,27 @@ const TeacherList = () => {
                 </th>
 
                 <th className="px-3 py-2 text-left text-[9px] font-semibold text-slate-500">
-                  Name
+                  First_name
                 </th>
 
                 <th className="px-3 py-2 text-left text-[9px] font-semibold text-slate-500">
-                  Subject
+                  Last_name
                 </th>
 
                 <th className="px-3 py-2 text-left text-[9px] font-semibold text-slate-500">
-                  Email
+                  Class
                 </th>
 
                 <th className="px-3 py-2 text-left text-[9px] font-semibold text-slate-500">
-                  Phone
+                  Rollno
                 </th>
 
                 <th className="px-3 py-2 text-center text-[9px] font-semibold text-slate-500">
-                  Status
+                  Dob
+                </th>
+
+                <th className="px-3 py-2 text-center text-[9px] font-semibold text-slate-500">
+                  Address
                 </th>
 
                 <th className="px-3 py-2 text-center text-[9px] font-semibold text-slate-500">
@@ -264,7 +270,7 @@ const TeacherList = () => {
             {/* TABLE BODY */}
             <tbody>
 
-              {student.map((teacher, index) => (
+              {students?.map((student, index) => (
 
                 <tr
                   className="
@@ -286,51 +292,41 @@ const TeacherList = () => {
                   <td className="px-3 py-2">
 
                     <span className="text-[9px] font-medium text-slate-700">
-                      {teacher.name}
+                      {student?.first_name}
                     </span>
 
                   </td>
 
 
-                  {/* SUBJECT */}
+                  {/* lastname */}
                   <td className="px-3 py-2 text-[9px] text-slate-500">
-                    {teacher.subject}
+                    {student.last_name}
                   </td>
 
 
-                  {/* EMAIL */}
+                  {/* Class */}
                   <td className="px-3 py-2 text-[9px] text-slate-500">
-                    {teacher.mail}
+                    {student.class}
                   </td>
 
 
-                  {/* PHONE */}
+                  {/* rollno */}
                   <td className="px-3 py-2 text-[9px] text-slate-500">
-                    {teacher.contact}
+                    {student.rollno}
                   </td>
 
 
-                  {/* STATUS */}
+                  {/* Dob */}
                   <td className="px-3 py-2 text-center">
 
-                    <span
-                      className={`
-                        inline-flex
-                        items-center
-                        rounded-full
-                        px-2
-                        py-0.5
-                        text-[8px]
-                        font-medium
+                    {student.dob}
 
-                        ${teacher.status === "Active"
-                          ? "bg-emerald-50 text-emerald-600"
-                          : "bg-red-50 text-red-500"
-                        }
-                      `}
-                    >
-                      {teacher.status}
-                    </span>
+                  </td>
+
+                  {/* Address */}
+                  <td className="px-3 py-2 text-center">
+
+                    {student.address}
 
                   </td>
 
@@ -353,7 +349,7 @@ const TeacherList = () => {
                           hover:bg-blue-50
                         "
                         title="Edit"
-                        onClick={() => handleEdit(teacher)}
+                        onClick={() => handleEdit(student)}
                       >
                         <Pencil size={10} />
                       </button>
@@ -372,7 +368,7 @@ const TeacherList = () => {
                           hover:bg-red-50
                         "
                         title="Delete"
-                        onClick={() => handleDelete(teacher)}
+                        onClick={() => handleDelete(student)}
                       >
                         <Trash2 size={10} />
                       </button>
@@ -396,7 +392,7 @@ const TeacherList = () => {
           totalpages={Totalpages}
           page={page}
           pagesize={pagesize}
-          teachercount={Teachercount}
+          count={studentcount}
         />
       </div>
 

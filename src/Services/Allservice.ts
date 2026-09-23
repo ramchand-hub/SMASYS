@@ -25,7 +25,6 @@ export async function loginUser(data: any): Promise<any> {
 export async function create_student(data: any): Promise<any> {
 	try {
 		const response = await api.post('/students/createStudent', data);
-		console.log(response, "create_student response!!")
 		return response;
 	} catch (error) {
 		console.error("create_student API error:", error);
@@ -35,7 +34,7 @@ export async function create_student(data: any): Promise<any> {
 
 export async function update_student(studentId: string, data: any): Promise<any> {
 	try {
-		const response = await api.post('/students/updateStudent', data);
+		const response = await api.put(`/students/updateStudent/${studentId}`, data);
 		console.log(response, "update_student response!!")
 		return response;
 	} catch (error) {
