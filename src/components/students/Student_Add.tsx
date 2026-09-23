@@ -14,8 +14,6 @@ const Addstudent = () => {
   const location = useLocation();
 
   const student = location.state?.student;
-  console.log(student,'student data...')
-  
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
@@ -68,13 +66,24 @@ const Addstudent = () => {
           student._id,
           formData
         );
+
+
       } else {
         // CREATE
         response = await create_student(formData);
+
       }
 
       if (response) {
-        navigate("/students");
+
+
+
+        navigate("/students", {
+          state: {
+            toast_message: response?.data?.message,
+            toast_type: "success"
+          }
+        });
       }
 
     } catch (err) {
@@ -230,7 +239,7 @@ const Addstudent = () => {
                 <label className="flex cursor-pointer items-center gap-2">
                   <input
                     type="radio"
-                    name="Gender"
+                    name="gender"
                     value="female"
                     checked={formData.gender === "female"}
                     onChange={handleChange}
@@ -245,7 +254,7 @@ const Addstudent = () => {
                 <label className="flex cursor-pointer items-center gap-2">
                   <input
                     type="radio"
-                    name="Gender"
+                    name="gender"
                     value="other"
                     checked={formData.gender === "other"}
                     onChange={handleChange}
@@ -303,6 +312,8 @@ const Addstudent = () => {
         </div>
 
       </form>
+
+
     </div>
   );
 };

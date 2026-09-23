@@ -11,7 +11,9 @@ import {
 import Pagination from "../../common/Pagination";
 import { useNavigate } from "react-router-dom";
 import { deleteStudent, studentList } from "../../Services/Allservice";
-
+import Toaster from "../../common/toaster";
+import { useLocation } from "react-router-dom";
+type ToastType = "success" | "error" | "warning" | "info";
 
 const TeacherList = () => {
 
@@ -20,9 +22,23 @@ const TeacherList = () => {
   const [studentdelete, setStudentDelete] = useState<boolean>(false)
   const [Totalpages, setTotalPages] = useState<number>()
   const [studentcount, setStudentcount] = useState<any>()
+  const [showtoast, setShowtoast] = useState(false)
+  const [toast_message, setToastmessage] = useState("")
+  const [toast_type, setToasttype] = useState<ToastType>("success")
   const page = 1
   const pagesize = 5
+  const location = useLocation()
 
+  useEffect(() => {
+    if (location.state?.toast_message) {
+      setToastmessage(location?.state?.toast_message);
+      setToasttype(location.state.toast_type);
+      setShowtoast(true);
+
+      // Clear navigation state
+      window.history.replaceState({}, document.title);
+    }
+  }, [location?.state])
   const addstudent = () => {
     try {
       navigate("/student-add")
@@ -79,6 +95,9 @@ const TeacherList = () => {
       const response = await deleteStudent(student?._id)
       if (response) {
         setStudentDelete(true)
+        setShowtoast(true)
+        setToastmessage(response?.data?.message)
+        setToasttype("success")
       }
     } catch (err) {
       console.error("error in delete student", err)
@@ -394,7 +413,18 @@ const TeacherList = () => {
           pagesize={pagesize}
           count={studentcount}
         />
+
+        {
+          showtoast && (
+            <Toaster
+              toast_message={toast_message}
+              onClose={() => setShowtoast(false)}
+              type={toast_type}
+            />
+          )
+        }
       </div>
+
 
     </div>
   );
