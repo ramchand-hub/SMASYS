@@ -21,9 +21,9 @@ const TeacherList = () => {
     const location = useLocation()
     const [teachers, setTeachers] = useState<any[]>([])
     const [teacherDelete, setTeacherDelete] = useState<boolean>(false)
-    const [Totalpages, setTotalPages] = useState<number>()
+    const [Totalpages, setTotalPages] = useState<any>()
     const [Teachercount, setTeachercount] = useState()
-    const page = 1
+    const [page, setPage] = useState(1)
     const pagesize = 5
     const [showtoast, setShowtoast] = useState(false)
     const [toast_message, setToastmessage] = useState("")
@@ -48,6 +48,23 @@ const TeacherList = () => {
         }
     }
 
+    const handlenext = () => {
+       
+        setPage(page + 1)
+
+       
+
+
+    }
+
+    const handleprevious = () => {
+        if (page > 1) {
+            setPage(page - 1)
+        }
+
+
+    }
+
     useEffect(() => {
         try {
             const teachersLists = async () => {
@@ -58,10 +75,11 @@ const TeacherList = () => {
 
                     }
                     const response = await teachersList(payload.page, payload.pagesize)
-                    if (response !== null || undefined) {
-                        setTeachers(response.data.data.teachers)
-                        setTotalPages(response.data.data.pagination.total_pages)
-                        setTeachercount(response.data.data.pagination.teacher_count)
+                    console.log(response?.data)
+                    if (response) {
+                        setTeachers(response?.data?.teacherlist)
+                        setTotalPages(response?.data?.pagination.total_pages)
+                        setTeachercount(response?.data?.pagination.teacher_count)
 
                     }
 
@@ -75,7 +93,7 @@ const TeacherList = () => {
         } catch (err) {
             console.error("error in teachers list", err)
         }
-    }, [teacherDelete])
+    }, [teacherDelete, page])
 
     const handleEdit = (teacher: any) => {
         try {
@@ -268,8 +286,8 @@ const TeacherList = () => {
                                     Phone
                                 </th>
 
-                                <th className="px-3 py-2 text-center text-[9px] font-semibold text-slate-500">
-                                    Status
+                                <th className="px-3 py-2 text-left text-[9px] font-semibold text-slate-500">
+                                    Address
                                 </th>
 
                                 <th className="px-3 py-2 text-center text-[9px] font-semibold text-slate-500">
@@ -284,7 +302,7 @@ const TeacherList = () => {
                         {/* TABLE BODY */}
                         <tbody>
 
-                            {teachers.map((teacher, index) => (
+                            {teachers?.map((teacher, index) => (
 
                                 <tr
                                     className="
@@ -330,29 +348,12 @@ const TeacherList = () => {
                                     </td>
 
 
-                                    {/* STATUS */}
-                                    <td className="px-3 py-2 text-center">
+                                    {/* Address */}
 
-                                        <span
-                                            className={`
-                        inline-flex
-                        items-center
-                        rounded-full
-                        px-2
-                        py-0.5
-                        text-[8px]
-                        font-medium
-
-                        ${teacher.status === "Active"
-                                                    ? "bg-emerald-50 text-emerald-600"
-                                                    : "bg-red-50 text-red-500"
-                                                }
-                      `}
-                                        >
-                                            {teacher.status}
-                                        </span>
-
+                                    <td className="px-3 py-2 text-[9px] text-slate-500">
+                                        {teacher.address}
                                     </td>
+
 
 
                                     {/* ACTION */}
@@ -417,6 +418,8 @@ const TeacherList = () => {
                     page={page}
                     pagesize={pagesize}
                     count={Teachercount}
+                    next={handlenext}
+                    previous={handleprevious}
                 />
                 {
                     showtoast && (

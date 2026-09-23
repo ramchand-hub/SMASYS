@@ -5,19 +5,24 @@ import {
 } from "lucide-react";
 
 interface paginate {
-  totalpages: number | undefined
-  page: number 
+
+  page: number
   pagesize: number
   count: any
+  next: () => void;
+  previous: () => void;
+  totalpages:any
 }
 const Pagination: React.FC<paginate> = ({
-  totalpages,
   count,
   page,
-  pagesize
+  pagesize,
+  next,
+  previous,
+  totalpages
 }) => {
-  const start = (page -1) * pagesize + 1
-  const end = Math.min(page * pagesize, count)
+  const start = (page - 1) * pagesize + 1
+  const end = Math.min(page * pagesize)
   return (
     <div
       className="
@@ -32,7 +37,7 @@ const Pagination: React.FC<paginate> = ({
     >
 
       <p className="text-[8px] text-slate-400">
-        Showing {start} to {end} of {count}
+        Showing {start} to {end} out of {count}
       </p>
 
 
@@ -52,8 +57,13 @@ const Pagination: React.FC<paginate> = ({
                 text-slate-400
                 hover:bg-slate-50
               "
+               onClick={previous}
+               disabled={page === 1}
         >
-          <ChevronLeft size={10} />
+          <ChevronLeft size={10}
+           
+
+          />
         </button>
 
 
@@ -71,7 +81,7 @@ const Pagination: React.FC<paginate> = ({
                 text-white
               "
         >
-          {totalpages}
+          {page}
         </button>
 
 
@@ -88,8 +98,12 @@ const Pagination: React.FC<paginate> = ({
                 text-slate-400
                 hover:bg-slate-50
               "
+               onClick={next}
+               disabled={page >= totalpages}
         >
-          <ChevronRight size={10} />
+          <ChevronRight size={10}
+           
+          />
         </button>
 
       </div>

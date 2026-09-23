@@ -20,12 +20,12 @@ const TeacherList = () => {
   const navigate = useNavigate()
   const [students, setstudents] = useState<any[]>([])
   const [studentdelete, setStudentDelete] = useState<boolean>(false)
-  const [Totalpages, setTotalPages] = useState<number>()
+  const [Totalpages, setTotalPages] = useState<any>()
   const [studentcount, setStudentcount] = useState<any>()
   const [showtoast, setShowtoast] = useState(false)
   const [toast_message, setToastmessage] = useState("")
   const [toast_type, setToasttype] = useState<ToastType>("success")
-  const page = 1
+  const [page, setPage] = useState(1)
   const pagesize = 5
   const location = useLocation()
 
@@ -46,7 +46,19 @@ const TeacherList = () => {
       console.error(err)
     }
   }
+  const handlenext = () => {
+    if (page < Totalpages) {
+      setPage(page + 1)
+    }
 
+  }
+
+  const handleprevious = () => {
+    if (page > 1) {
+      setPage(page - 1)
+
+    }
+  }
   useEffect(() => {
     try {
       const studentLists = async () => {
@@ -76,7 +88,7 @@ const TeacherList = () => {
     } catch (err) {
       console.error("error in student list", err)
     }
-  }, [studentdelete])
+  }, [studentdelete, page])
 
   const handleEdit = (student: any) => {
     try {
@@ -408,10 +420,13 @@ const TeacherList = () => {
 
         <Pagination
 
-          totalpages={Totalpages}
+         totalpages={Totalpages}
           page={page}
           pagesize={pagesize}
           count={studentcount}
+          next={handlenext}
+          previous={handleprevious}
+
         />
 
         {

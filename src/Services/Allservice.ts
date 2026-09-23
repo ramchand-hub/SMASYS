@@ -93,7 +93,7 @@ export async function teachersList(page: any, pagesize: any): Promise<any> {
 
 			}
 		);
-		return response;
+		return response.data;
 	} catch (error) {
 		console.error("teachersList API error:", error);
 		throw error;
