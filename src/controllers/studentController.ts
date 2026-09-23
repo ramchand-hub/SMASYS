@@ -10,7 +10,7 @@ export const createStudent = async (req: Request, res: Response, next: NextFunct
     }
 
     const Existing_student = await Student.findOne({
-      student_mail: result?.student_mail
+      rollno: result?.rollno
     })
     if (Existing_student) {
       return res.status(409).json(errorResponse('Student already exist..'));
@@ -36,22 +36,24 @@ export const createStudent = async (req: Request, res: Response, next: NextFunct
 export const getStudents = async (req: Request, res: Response, next: NextFunction) => {
   try {
 
-    const {page, pagesize}:any = req.query;
+    const { page, pagesize }: any = req.query;
     const students = await Student.find();
     // const count_result = await Student.aggregate([{
     //   $count: "students_count"
     // }])
     const students_count = await Student.countDocuments()
-    const Totalpages = Math.ceil(students_count/pagesize)
+    const Totalpages = Math.ceil(students_count / pagesize)
     if (students.length === 0) {
       return res.json(successResponse("No students found", []));
     } else {
-      return res.json(successResponse("Students retrieved successfully", { students,pagination:{
-        page,
-        pagesize,
-        students_count,
-        Totalpages
-      }  }));
+      return res.json(successResponse("Students retrieved successfully", {
+        students, pagination: {
+          page,
+          pagesize,
+          students_count,
+          Totalpages
+        }
+      }));
     }
   } catch (err) {
     next(err);

@@ -15,7 +15,7 @@ const StudentSchema = new Schema<IStudent>({
   first_name: { type: String, required: true, trim: true, lowercase: true },
   last_name: { type: String, required: true, trim: true, lowercase: true },
   class: { type: String, required: true, trim: true, lowercase: true },
-  rollno: { type: String, required: true, trim: true, lowercase: true },
+  rollno: { type: String, required: true, trim: true, lowercase: true, unique:true },
   dob: { type: String, required: true, trim: true },
   gender: { type: String, required: true, trim: true, lowercase: true },
   address: { type: String, required: true, trim: true },
