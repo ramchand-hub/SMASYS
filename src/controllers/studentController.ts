@@ -36,18 +36,37 @@ export const createStudent = async (req: Request, res: Response, next: NextFunct
 export const getStudents = async (req: Request, res: Response, next: NextFunction) => {
   try {
 
-    const { page, pagesize }: any = req.query;
-    const students = await Student.find();
-    // const count_result = await Student.aggregate([{
-    //   $count: "students_count"
-    // }])
+    const page = Number(req.query.page) || 1;
+    const pagesize = Number(req.query.pagesize) || 5;
+    const serachquery = req.query.searchquery || "";
+        const currentpage = (page - 1) * pagesize;
+
     const students_count = await Student.countDocuments()
+    const studentlist = await Student.find({
+      $or:[
+        {
+          first_name:{
+            $regex:serachquery, $options:"i"
+          }
+        },
+        {
+          last_name:{
+            $regex:serachquery, $options:"i"
+          }
+        },
+        {
+          rollno:{
+            $regex:serachquery, $options:"i"
+          }
+        },
+      ]
+    }).skip(currentpage).limit(pagesize)
     const Totalpages = Math.ceil(students_count / pagesize)
-    if (students.length === 0) {
+    if (studentlist?.length === 0) {
       return res.json(successResponse("No students found", []));
     } else {
       return res.json(successResponse("Students retrieved successfully", {
-        students, pagination: {
+        studentlist, pagination: {
           page,
           pagesize,
           students_count,
@@ -55,16 +74,6 @@ export const getStudents = async (req: Request, res: Response, next: NextFunctio
         }
       }));
     }
-  } catch (err) {
-    next(err);
-  }
-};
-
-export const getStudentById = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const student = await Student.findById(req.params.id);
-    if (!student) return res.status(404).json(errorResponse('Student not found'));
-    res.json(successResponse('Student retrieved', student));
   } catch (err) {
     next(err);
   }
