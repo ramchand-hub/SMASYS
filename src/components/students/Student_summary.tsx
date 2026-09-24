@@ -26,6 +26,7 @@ const TeacherList = () => {
   const [toast_message, setToastmessage] = useState("")
   const [toast_type, setToasttype] = useState<ToastType>("success")
   const [page, setPage] = useState(1)
+  const [search, setSearch] = useState("")
   const pagesize = 5
   const location = useLocation()
 
@@ -59,20 +60,27 @@ const TeacherList = () => {
 
     }
   }
+
+  const handleSearch = (e: any) => {
+    try {
+      setSearch(e.target.value)
+    } catch (err) {
+      console.error(err)
+    }
+  }
   useEffect(() => {
     try {
       const studentLists = async () => {
         try {
           const payload = {
             page: page,
-            pagesize: pagesize
-
+            pagesize: pagesize,
+            searchquery: search
           }
-          const response = await studentList(payload.page, payload.pagesize)
-          console.log(response.data, "studentlist")
+          const response = await studentList(payload.page, payload.pagesize, payload.searchquery)
 
           if (response) {
-            setstudents(response?.data?.students)
+            setstudents(response?.data?.studentlist)
             setTotalPages(response?.data?.pagination?.Totalpages)
             setStudentcount(response?.data?.pagination?.students_count)
 
@@ -88,7 +96,7 @@ const TeacherList = () => {
     } catch (err) {
       console.error("error in student list", err)
     }
-  }, [studentdelete, page])
+  }, [studentdelete, page, search])
 
   const handleEdit = (student: any) => {
     try {
@@ -204,7 +212,7 @@ const TeacherList = () => {
             />
 
             <input
-              type="text"
+              type="search"
               placeholder="Search student..."
               className="
                 w-full
@@ -223,30 +231,10 @@ const TeacherList = () => {
                 focus:ring-1
                 focus:ring-blue-100
               "
+              onChange={handleSearch}
             />
 
           </div>
-
-
-          {/* Filter */}
-          <button
-            className="
-              flex
-              items-center
-              gap-1.5
-              h-7
-              px-2.5
-              rounded
-              border
-              border-slate-200
-              text-[10px]
-              text-slate-500
-              hover:bg-slate-50
-            "
-          >
-            <SlidersHorizontal size={11} />
-            Filter
-          </button>
 
         </div>
 
@@ -301,75 +289,77 @@ const TeacherList = () => {
             {/* TABLE BODY */}
             <tbody>
 
-              {students?.map((student, index) => (
+              {
+                students?.length > 0 ? (
+                  students?.map((student, index) => (
 
-                <tr
-                  className="
+                    <tr
+                      className="
                     border-b
                     border-slate-100
                     last:border-0
                     hover:bg-blue-50/30
                   "
 
-                >
+                    >
 
 
-                  <td className="px-3 py-2 text-[9px] text-slate-500">
-                    {index + 1}
-                  </td>
+                      <td className="px-3 py-2 text-[9px] text-slate-500">
+                        {index + 1}
+                      </td>
 
 
-                  {/* NAME */}
-                  <td className="px-3 py-2">
+                      {/* NAME */}
+                      <td className="px-3 py-2">
 
-                    <span className="text-[9px] font-medium text-slate-700">
-                      {student?.first_name}
-                    </span>
+                        <span className="text-[9px] font-medium text-slate-700">
+                          {student?.first_name}
+                        </span>
 
-                  </td>
-
-
-                  {/* lastname */}
-                  <td className="px-3 py-2 text-[9px] text-slate-500">
-                    {student.last_name}
-                  </td>
+                      </td>
 
 
-                  {/* Class */}
-                  <td className="px-3 py-2 text-[9px] text-slate-500">
-                    {student.class}
-                  </td>
+                      {/* lastname */}
+                      <td className="px-3 py-2 text-[9px] text-slate-500">
+                        {student.last_name}
+                      </td>
 
 
-                  {/* rollno */}
-                  <td className="px-3 py-2 text-[9px] text-slate-500">
-                    {student.rollno}
-                  </td>
+                      {/* Class */}
+                      <td className="px-3 py-2 text-[9px] text-slate-500">
+                        {student.class}
+                      </td>
 
 
-                  {/* Dob */}
-                  <td className="px-3 py-2 text-center">
-
-                    {student.dob}
-
-                  </td>
-
-                  {/* Address */}
-                  <td className="px-3 py-2 text-center">
-
-                    {student.address}
-
-                  </td>
+                      {/* rollno */}
+                      <td className="px-3 py-2 text-[9px] text-slate-500">
+                        {student.rollno}
+                      </td>
 
 
-                  {/* ACTION */}
-                  <td className="px-3 py-2">
+                      {/* Dob */}
+                      <td className="px-3 py-2 text-center">
 
-                    <div className="flex items-center justify-center gap-1">
+                        {student.dob}
 
-                      {/* Edit */}
-                      <button
-                        className="
+                      </td>
+
+                      {/* Address */}
+                      <td className="px-3 py-2 text-center">
+
+                        {student.address}
+
+                      </td>
+
+
+                      {/* ACTION */}
+                      <td className="px-3 py-2">
+
+                        <div className="flex items-center justify-center gap-1">
+
+                          {/* Edit */}
+                          <button
+                            className="
                           flex
                           h-5
                           w-5
@@ -379,16 +369,16 @@ const TeacherList = () => {
                           text-blue-500
                           hover:bg-blue-50
                         "
-                        title="Edit"
-                        onClick={() => handleEdit(student)}
-                      >
-                        <Pencil size={10} />
-                      </button>
+                            title="Edit"
+                            onClick={() => handleEdit(student)}
+                          >
+                            <Pencil size={10} />
+                          </button>
 
 
-                      {/* Delete */}
-                      <button
-                        className="
+                          {/* Delete */}
+                          <button
+                            className="
                           flex
                           h-5
                           w-5
@@ -398,19 +388,26 @@ const TeacherList = () => {
                           text-red-500
                           hover:bg-red-50
                         "
-                        title="Delete"
-                        onClick={() => handleDelete(student)}
-                      >
-                        <Trash2 size={10} />
-                      </button>
+                            title="Delete"
+                            onClick={() => handleDelete(student)}
+                          >
+                            <Trash2 size={10} />
+                          </button>
 
-                    </div>
+                        </div>
 
-                  </td>
+                      </td>
 
-                </tr>
+                    </tr>
 
-              ))}
+                  ))
+                )
+                  : <tr>
+                    <td colSpan={3} className="text-center py-4">
+                      No students found
+                    </td>
+                  </tr>
+              }
 
             </tbody>
 
@@ -420,7 +417,7 @@ const TeacherList = () => {
 
         <Pagination
 
-         totalpages={Totalpages}
+          totalpages={Totalpages}
           page={page}
           pagesize={pagesize}
           count={studentcount}

@@ -5,8 +5,6 @@ import {
     Plus,
     Pencil,
     Trash2,
-    ChevronLeft,
-    ChevronRight,
 } from "lucide-react";
 import Pagination from "../../common/Pagination";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -28,7 +26,7 @@ const TeacherList = () => {
     const [showtoast, setShowtoast] = useState(false)
     const [toast_message, setToastmessage] = useState("")
     const [toast_type, setToasttype] = useState<ToastType>("success")
-
+    const [search, setSearch] = useState("")
     useEffect(() => {
         if (location.state?.toast_message) {
             setToastmessage(location?.state?.toast_message);
@@ -49,12 +47,8 @@ const TeacherList = () => {
     }
 
     const handlenext = () => {
-       
+
         setPage(page + 1)
-
-       
-
-
     }
 
     const handleprevious = () => {
@@ -62,7 +56,14 @@ const TeacherList = () => {
             setPage(page - 1)
         }
 
+    }
 
+    const handleSearch = (e: any) => {
+        try {
+            setSearch(e.target.value)
+        } catch (err) {
+            console.error(err)
+        }
     }
 
     useEffect(() => {
@@ -71,11 +72,10 @@ const TeacherList = () => {
                 try {
                     const payload = {
                         page: page,
-                        pagesize: pagesize
-
+                        pagesize: pagesize,
+                        searchquery: search
                     }
-                    const response = await teachersList(payload.page, payload.pagesize)
-                    console.log(response?.data)
+                    const response = await teachersList(payload.page, payload.pagesize, payload.searchquery)
                     if (response) {
                         setTeachers(response?.data?.teacherlist)
                         setTotalPages(response?.data?.pagination.total_pages)
@@ -93,7 +93,7 @@ const TeacherList = () => {
         } catch (err) {
             console.error("error in teachers list", err)
         }
-    }, [teacherDelete, page])
+    }, [teacherDelete, page, search])
 
     const handleEdit = (teacher: any) => {
         try {
@@ -206,10 +206,11 @@ const TeacherList = () => {
                 -translate-y-1/2
                 text-slate-400
               "
+
                         />
 
                         <input
-                            type="text"
+                            type="search"
                             placeholder="Search teachers..."
                             className="
                 w-full
@@ -228,30 +229,11 @@ const TeacherList = () => {
                 focus:ring-1
                 focus:ring-blue-100
               "
+                            onChange={handleSearch}
+
                         />
 
                     </div>
-
-
-                    {/* Filter */}
-                    <button
-                        className="
-              flex
-              items-center
-              gap-1.5
-              h-7
-              px-2.5
-              rounded
-              border
-              border-slate-200
-              text-[10px]
-              text-slate-500
-              hover:bg-slate-50
-            "
-                    >
-                        <SlidersHorizontal size={11} />
-                        Filter
-                    </button>
 
                 </div>
 
@@ -302,68 +284,70 @@ const TeacherList = () => {
                         {/* TABLE BODY */}
                         <tbody>
 
-                            {teachers?.map((teacher, index) => (
+                            {
+                                teachers?.length > 0 ? (
+                                    teachers?.map((teacher, index) => (
 
-                                <tr
-                                    className="
+                                        <tr
+                                            className="
                     border-b
                     border-slate-100
                     last:border-0
                     hover:bg-blue-50/30
                   "
-
-                                >
-
-
-                                    <td className="px-3 py-2 text-[9px] text-slate-500">
-                                        {index + 1}
-                                    </td>
+                key={index}
+                                        >
 
 
-                                    {/* NAME */}
-                                    <td className="px-3 py-2">
-
-                                        <span className="text-[9px] font-medium text-slate-700">
-                                            {teacher.name}
-                                        </span>
-
-                                    </td>
+                                            <td className="px-3 py-2 text-[9px] text-slate-500">
+                                                {index + 1}
+                                            </td>
 
 
-                                    {/* SUBJECT */}
-                                    <td className="px-3 py-2 text-[9px] text-slate-500">
-                                        {teacher.subject}
-                                    </td>
+                                            {/* NAME */}
+                                            <td className="px-3 py-2">
+
+                                                <span className="text-[9px] font-medium text-slate-700">
+                                                    {teacher.name}
+                                                </span>
+
+                                            </td>
 
 
-                                    {/* EMAIL */}
-                                    <td className="px-3 py-2 text-[9px] text-slate-500">
-                                        {teacher.mail}
-                                    </td>
+                                            {/* SUBJECT */}
+                                            <td className="px-3 py-2 text-[9px] text-slate-500">
+                                                {teacher.subject}
+                                            </td>
 
 
-                                    {/* PHONE */}
-                                    <td className="px-3 py-2 text-[9px] text-slate-500">
-                                        {teacher.contact}
-                                    </td>
+                                            {/* EMAIL */}
+                                            <td className="px-3 py-2 text-[9px] text-slate-500">
+                                                {teacher.mail}
+                                            </td>
 
 
-                                    {/* Address */}
-
-                                    <td className="px-3 py-2 text-[9px] text-slate-500">
-                                        {teacher.address}
-                                    </td>
-
+                                            {/* PHONE */}
+                                            <td className="px-3 py-2 text-[9px] text-slate-500">
+                                                {teacher.contact}
+                                            </td>
 
 
-                                    {/* ACTION */}
-                                    <td className="px-3 py-2">
+                                            {/* Address */}
 
-                                        <div className="flex items-center justify-center gap-1">
+                                            <td className="px-3 py-2 text-[9px] text-slate-500">
+                                                {teacher.address}
+                                            </td>
 
-                                            {/* Edit */}
-                                            <button
-                                                className="
+
+
+                                            {/* ACTION */}
+                                            <td className="px-3 py-2">
+
+                                                <div className="flex items-center justify-center gap-1">
+
+                                                    {/* Edit */}
+                                                    <button
+                                                        className="
                           flex
                           h-5
                           w-5
@@ -373,16 +357,16 @@ const TeacherList = () => {
                           text-blue-500
                           hover:bg-blue-50
                         "
-                                                title="Edit"
-                                                onClick={() => handleEdit(teacher)}
-                                            >
-                                                <Pencil size={10} />
-                                            </button>
+                                                        title="Edit"
+                                                        onClick={() => handleEdit(teacher)}
+                                                    >
+                                                        <Pencil size={10} />
+                                                    </button>
 
 
-                                            {/* Delete */}
-                                            <button
-                                                className="
+                                                    {/* Delete */}
+                                                    <button
+                                                        className="
                           flex
                           h-5
                           w-5
@@ -392,19 +376,29 @@ const TeacherList = () => {
                           text-red-500
                           hover:bg-red-50
                         "
-                                                title="Delete"
-                                                onClick={() => handleDelete(teacher)}
-                                            >
-                                                <Trash2 size={10} />
-                                            </button>
+                                                        title="Delete"
+                                                        onClick={() => handleDelete(teacher)}
+                                                    >
+                                                        <Trash2 size={10} />
+                                                    </button>
 
-                                        </div>
+                                                </div>
 
-                                    </td>
+                                            </td>
 
-                                </tr>
+                                        </tr>
 
-                            ))}
+                                    ))
+                                )
+
+                                    :
+                                    <tr>
+                                        <td colSpan={3} className="text-center py-4">
+                                            No students found
+                                        </td>
+                                    </tr>
+
+                            }
 
                         </tbody>
 

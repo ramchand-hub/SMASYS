@@ -14,7 +14,6 @@ export async function createUser(data: any): Promise<any> {
 export async function loginUser(data: any): Promise<any> {
 	try {
 		const response = await api.post('/auth/login', data);
-		console.log(response, "Login response!!")
 		return response.data;
 	} catch (error) {
 		console.error("loginUser API error:", error);
@@ -35,7 +34,6 @@ export async function create_student(data: any): Promise<any> {
 export async function update_student(studentId: string, data: any): Promise<any> {
 	try {
 		const response = await api.put(`/students/updateStudent/${studentId}`, data);
-		console.log(response, "update_student response!!")
 		return response;
 	} catch (error) {
 		console.error("update_student API error:", error);
@@ -54,13 +52,14 @@ export async function deleteStudent(studentId: string): Promise<any> {
 	}
 }
 
-export async function studentList(page: any, pagesize: any): Promise<any> {
+export async function studentList(page: any, pagesize: any, searchquery:any): Promise<any> {
 	try {
 		const response = await api.get('/students/getStudentsList',
 			{
 				params: {
 					page,
-					pagesize
+					pagesize,
+					searchquery
 				}
 
 			}
@@ -82,13 +81,14 @@ export async function create_teacher(data: any): Promise<any> {
 	}
 }
 
-export async function teachersList(page: any, pagesize: any): Promise<any> {
+export async function teachersList(page: any, pagesize: any, searchquery:string): Promise<any> {
 	try {
 		const response = await api.get('/teachers/getTeachersList',
 			{
 				params: {
 					page,
-					pagesize
+					pagesize,
+					searchquery
 				}
 
 			}
