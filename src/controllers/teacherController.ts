@@ -31,26 +31,45 @@ export const createTeacher = async (
 };
 
 export const getTeachers = async (
-  _req: Request,
+  req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   try {
-    const { page, pagesize }: any = _req.query
-    const teachers = await Teacher.find();
-    // const teacher_count = await Teacher.aggregate([{
-    //   $count:"Teachers_count"
-    // }])
+
+    const page = Number(req.query.page) || 1;
+    const pagesize = Number(req.query.pagesize) || 5;
+    const serachquery = req.query.searchquery || "";
+    
+    
+    const currentpage = (page - 1) * pagesize;
+
     const teacher_count = await Teacher.countDocuments();
+
+    const teacherlist = await Teacher.find({
+      $or:[
+        {
+          name:{
+            $regex:serachquery, $options:"i"
+          }
+          
+        },
+        {
+          mail:{
+            $regex:serachquery, $options:"i"
+          }
+        }
+      ]
+    }).skip(currentpage).limit(pagesize)
 
     // Calculate total pages
     const total_pages = Math.ceil(teacher_count / pagesize);
 
-    if (teachers.length === 0) {
+    if (teacherlist?.length === 0) {
       return res.json(successResponse("No teachers found", []));
     } else {
       return res.json(successResponse("Teachers retrieved successfully", {
-        teachers, pagination: {
+        teacherlist, pagination: {
           page,
           pagesize,
           teacher_count,
@@ -64,25 +83,6 @@ export const getTeachers = async (
   }
 };
 
-export const getTeacherById = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const teacher = await Teacher.findById(req.params.id);
-    if (!teacher) {
-      return res.status(404).json(errorResponse("Teacher not found"));
-
-    } else {
-      return res.status(200).json(successResponse("Teacher retrieved", teacher));
-
-    }
-
-  } catch (err) {
-    next(err);
-  }
-};
 
 export const updateTeacher = async (
   req: Request,
