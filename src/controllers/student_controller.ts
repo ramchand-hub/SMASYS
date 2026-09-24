@@ -39,14 +39,15 @@ router.post("/createStudent", async (req: Request, res: Response) => {
 
 router.get("/getStudentsList", async (req: Request, res: Response) => {
   try {
-    const { page, pagesize } = req.query;
+    const { page, pagesize, searchquery } = req.query;
     const api_res = await axiosHandler({
       method: "GET",
       url: `${config?.student_microservice}/students/getStudentsList`,
 
       params: {
         page,
-        pagesize
+        pagesize,
+        searchquery
       }
 
 
