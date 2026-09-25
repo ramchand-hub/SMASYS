@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { FaHome, FaUserGraduate, FaCog, FaTimes } from "react-icons/fa";
+import { FaHome, FaUserGraduate, FaCog, FaTimes, FaChalkboardTeacher,FaSchool } from "react-icons/fa";
 
 const Sidebar = ({ open, setOpen }: any) => {
   return (
@@ -19,10 +19,9 @@ const Sidebar = ({ open, setOpen }: any) => {
 
         <nav className="mt-5 flex flex-col">
           <NavLink
-            to="/"
+            to="/Dashboard"
             className={({ isActive }) =>
-              `flex items-center gap-3 px-5 py-3 hover:bg-blue-600 ${
-                isActive ? "bg-blue-600" : ""
+              `flex items-center gap-3 px-5 py-3 hover:bg-blue-600 ${isActive ? "bg-blue-600" : ""
               }`
             }
           >
@@ -33,8 +32,7 @@ const Sidebar = ({ open, setOpen }: any) => {
           <NavLink
             to="/students"
             className={({ isActive }) =>
-              `flex items-center gap-3 px-5 py-3 hover:bg-blue-600 ${
-                isActive ? "bg-blue-600" : ""
+              `flex items-center gap-3 px-5 py-3 hover:bg-blue-600 ${isActive ? "bg-blue-600" : ""
               }`
             }
           >
@@ -45,13 +43,22 @@ const Sidebar = ({ open, setOpen }: any) => {
           <NavLink
             to="/Teachers"
             className={({ isActive }) =>
-              `flex items-center gap-3 px-5 py-3 hover:bg-blue-600 ${
-                isActive ? "bg-blue-600" : ""
+              `flex items-center gap-3 px-5 py-3 hover:bg-blue-600 ${isActive ? "bg-blue-600" : ""
               }`
             }
           >
-            <FaCog />
+            <FaChalkboardTeacher />
             Teachers
+          </NavLink>
+                   <NavLink
+            to="/Classes"
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-5 py-3 hover:bg-blue-600 ${isActive ? "bg-blue-600" : ""
+              }`
+            }
+          >
+            <FaSchool />
+            Classes
           </NavLink>
         </nav>
       </div>

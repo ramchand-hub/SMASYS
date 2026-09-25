@@ -52,7 +52,7 @@ export async function deleteStudent(studentId: string): Promise<any> {
 	}
 }
 
-export async function studentList(page: any, pagesize: any, searchquery:any): Promise<any> {
+export async function studentList(page: any, pagesize: any, searchquery: any): Promise<any> {
 	try {
 		const response = await api.get('/students/getStudentsList',
 			{
@@ -81,7 +81,7 @@ export async function create_teacher(data: any): Promise<any> {
 	}
 }
 
-export async function teachersList(page: any, pagesize: any, searchquery:string): Promise<any> {
+export async function teachersList(page: any, pagesize: any, searchquery: string): Promise<any> {
 	try {
 		const response = await api.get('/teachers/getTeachersList',
 			{
@@ -118,6 +118,57 @@ export async function deleteTeacher(teacherId: string): Promise<any> {
 		return response;
 	} catch (error) {
 		console.error("deleteTeacher API error:", error);
+		throw error;
+	}
+}
+
+export async function create_class(data: any): Promise<any> {
+	try {
+		const response = await api.post('/classes/createClass', data);
+		return response;
+	} catch (error) {
+		console.error("create_class API error:", error);
+		throw error;
+	}
+}
+
+export async function classsList(page: any, pagesize: any, searchquery: string): Promise<any> {
+	try {
+		const response = await api.get('/classes/getclassesList',
+			{
+				params: {
+					page,
+					pagesize,
+					searchquery
+				}
+
+			}
+		);
+		return response.data;
+	} catch (error) {
+		console.error("classsList API error:", error);
+		throw error;
+	}
+}
+
+export async function updateclass(classId: string, data: any): Promise<any> {
+	try {
+		const response = await api.put(`/classes/updateclass/${classId}`, data
+		);
+		return response;
+	} catch (error) {
+		console.error("updateclass API error:", error);
+		throw error;
+	}
+}
+
+export async function deleteclass(classId: string): Promise<any> {
+	try {
+		const response = await api.delete(`/classes/deleteclass/${classId}`,
+		);
+		return response;
+	} catch (error) {
+		console.error("deleteclass API error:", error);
 		throw error;
 	}
 }
