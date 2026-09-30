@@ -72,10 +72,10 @@ const AddTeacher = () => {
         response = await create_teacher(formData);
       }
 
-      if (response) {
+      if (response?.data?.success === true) {
         navigate("/Teachers", {
           state: {
-            toast_message: response?.data?.toast_message,
+            toast_message: response?.data?.message,
             toast_type: "success"
           }
         });
@@ -83,6 +83,7 @@ const AddTeacher = () => {
 
     } catch (err) {
       console.error("Error in teacher submit:", err);
+      
     }
   };
 

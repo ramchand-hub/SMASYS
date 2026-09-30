@@ -172,3 +172,14 @@ export async function deleteclass(classId: string): Promise<any> {
 		throw error;
 	}
 }
+
+export async function teacheroptions(): Promise<any> {
+	try {
+		const response = await api.get("/classes/getTeacheroption",
+		);
+		return response;
+	} catch (error) {
+		console.error("teacheroptions API error:", error);
+		throw error;
+	}
+}

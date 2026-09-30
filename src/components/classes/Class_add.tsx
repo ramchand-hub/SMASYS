@@ -2,34 +2,48 @@ import React, { useEffect, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import {
   create_class,
-  updateclass
+  updateclass,
+  teacheroptions
 } from "../../Services/Allservice";
 import {
   useNavigate,
   useLocation
 } from "react-router-dom";
-
+import Toaster from "../../common/toaster";
+type ToastType = "success" | "error" | "warning" | "info";
 const AddClass = () => {
   const navigate = useNavigate();
   const location = useLocation();
-
+  const [teacheroption, setTeacheroption] = useState([])
   const class_val = location.state?.class;
+  console.log(class_val,'class_val..')
+  const [toast_message, setToastmessage] = useState("")
+  const [showtoast, setShowtoast] = useState(false)
+  const [toast_type, setToasttype] = useState<ToastType>("success")
 
+  useEffect(() => {
+    const getTeacheroptions = async () => {
+      const response = await teacheroptions()
+      setTeacheroption(response?.data?.data)
+    }
+
+    getTeacheroptions()
+  }, [])
   const [formData, setFormData] = useState({
     class_name: "",
-    section:"",
-    max_students:"",
-    class_teacher:""
+    section: "",
+    max_students: "",
+    class_teacher: ""
   });
 
   // Populate form when editing
   useEffect(() => {
     if (class_val) {
       setFormData({
-        class_name: class_val.class_name || "",
-        section: class_val.section || "",
-        max_students:class_val.max_students || "",
-        class_teacher:class_val.class_teacher || "",
+        class_name: class_val?.class_name || "",
+        section: class_val?.section || "",
+        max_students: class_val?.max_students || "",
+        class_teacher: class_val?.class_teacher || "",
       });
     }
   }, [class_val]);
@@ -56,27 +70,42 @@ const AddClass = () => {
       let response;
 
       if (class_val) {
-        // EDIT
         response = await updateclass(
           class_val._id,
           formData
         );
       } else {
-        // CREATE
         response = await create_class(formData);
+        console.log(response)
       }
 
-      if (response) {
+      if (response?.data?.success === true) {
         navigate("/classes", {
           state: {
-            toast_message: response?.data?.toast_message,
-            toast_type: "success"
-          }
+            toast_message:
+              response?.data?.message || "Class saved successfully",
+            toast_type: "success",
+          },
         });
+      } else {
+        setToastmessage(
+          response?.data?.message || "Something went wrong"
+        );
+        setToasttype("error");
+        setShowtoast(true);
       }
 
-    } catch (err) {
+    } catch (err: any) {
       console.error("Error in class submit:", err);
+
+      setToastmessage(
+        err?.response?.data?.message ||
+        err?.message ||
+        "Something went wrong"
+      );
+
+      setToasttype("error");
+      setShowtoast(true);
     }
   };
 
@@ -99,7 +128,7 @@ const AddClass = () => {
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
 
             {/* Name */}
-              <div>
+            <div>
               <label className="mb-2 block text-xs font-medium text-slate-600">
                 Classes Name <span className="text-red-500">*</span>
               </label>
@@ -107,17 +136,17 @@ const AddClass = () => {
               <div className="relative">
                 <select
                   name="class_name"
-                  value={formData.class_name}
+                  value={formData?.class_name}
                   onChange={handleChange}
                   className="h-10 w-full appearance-none rounded-md border border-slate-200 bg-white px-3 pr-10 text-sm text-slate-500 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                 >
                   <option value="">Select Class</option>
-                  <option value="Class 1">Class 1</option>
-                  <option value="Class 2">Class 2</option>
-                  <option value="Class 3">Class 3</option>
-                  <option value="Class 4">Class 4</option>
-                  <option value="Class 5">Class 5</option>
-                  <option value="Class 6">
+                  <option value="class 1">Class 1</option>
+                  <option value="class 2">Class 2</option>
+                  <option value="class 3">Class 3</option>
+                  <option value="class 4">Class 4</option>
+                  <option value="class 5">Class 5</option>
+                  <option value="class 6">
                     Class 6
                   </option>
                 </select>
@@ -130,10 +159,10 @@ const AddClass = () => {
             </div>
 
             {/* section */}
-            
+
             <div>
               <label className="mb-2 block text-xs font-medium text-slate-600">
-                 Section <span className="text-red-500">*</span>
+                Section <span className="text-red-500">*</span>
               </label>
 
               <div className="relative">
@@ -144,10 +173,10 @@ const AddClass = () => {
                   className="h-10 w-full appearance-none rounded-md border border-slate-200 bg-white px-3 pr-10 text-sm text-slate-500 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                 >
                   <option value="">Select Section</option>
-                  <option value="Class 1">A</option>
-                  <option value="Class 2">B</option>
-                  <option value="Class 3">C</option>
-                 
+                  <option value="a">A</option>
+                  <option value="b">B</option>
+                  <option value="c">C</option>
+
                 </select>
 
                 <ChevronDown
@@ -191,14 +220,14 @@ const AddClass = () => {
                   onChange={handleChange}
                   className="h-10 w-full appearance-none rounded-md border border-slate-200 bg-white px-3 pr-10 text-sm text-slate-500 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                 >
-                  <option value="">Select Subject</option>
-                  <option value="mathematics">Mathematics</option>
-                  <option value="english">English</option>
-                  <option value="science">Science</option>
-                  <option value="computer">Computer</option>
-                  <option value="social-science">
-                    Social Science
-                  </option>
+                  <option value="">Select Teacher</option>
+                  {
+                    teacheroption?.map((teach: any) => (
+                      <option value={teach._id}>{teach.name}</option>
+                    ))
+                  }
+
+
                 </select>
 
                 <ChevronDown
@@ -210,7 +239,7 @@ const AddClass = () => {
 
           </div>
 
-          
+
 
         </div>
 
@@ -235,6 +264,15 @@ const AddClass = () => {
         </div>
 
       </form>
+      {
+        showtoast &&
+
+        <Toaster
+          toast_message={toast_message}
+          onClose={() => setShowtoast(false)}
+          type={toast_type}
+        />
+      }
     </div>
   );
 };
