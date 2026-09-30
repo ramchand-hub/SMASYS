@@ -7,5 +7,6 @@ route.post("/createClass", verifyToken, class_controller)
 route.get("/getclassesList", verifyToken, class_controller)
 route.put("/updateclass/:id", verifyToken, class_controller)
 route.delete("/deleteclass/:id", verifyToken, class_controller)
+route.get("/getTeacheroption", verifyToken, class_controller)
 
 export default route

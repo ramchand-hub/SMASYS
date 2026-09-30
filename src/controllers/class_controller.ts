@@ -126,4 +126,31 @@ router.delete("/deleteclass/:id", async(req:Request, res:Response)=>{
 
   }
 })
+router.get("/getTeacheroption", async(req:Request, res:Response)=>{
+  try{
+      const api_res = await axiosHandler({
+      method: "GET",
+      url: `${config?.teacher_microservice}/classes/getTeacheroption`,
+      // data: result
+    });
+     if (
+      api_res?.statusCode === 200 
+    ) {
+      return send_success(
+        res,
+        api_res?.response?.message,
+        api_res?.response?.data,
+      );
+    } else {
+      return invalid(res, api_res?.response?.message, api_res?.response?.data);
+    }
+
+  }catch(err:any){
+    logger.error("teacher option is not getting",{
+      error:err.message
+    })
+        return send_fail(res, err?.message);
+
+  }
+})
 export default router;
