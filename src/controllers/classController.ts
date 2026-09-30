@@ -185,3 +185,29 @@ export const deleteClass = async (
         next(err);
     }
 };
+
+export const getTeacheroption = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+) => {
+    try {
+        const class_teacher = await Teacher.find(
+            {},
+
+            {
+                _id: 1, name: 1
+            }
+
+        )
+        if (class_teacher) {
+            res.json(successResponse("Class teacher options retrieved", class_teacher));
+        } else {
+            return res.status(404).json(errorResponse("Class teacher options not found"));
+        }
+
+
+    } catch (err) {
+        next(err);
+    }
+};
