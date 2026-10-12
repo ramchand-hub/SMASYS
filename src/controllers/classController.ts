@@ -83,7 +83,7 @@ export const getclasseslist = async (
         const serachquery = req.query.searchquery || "";
 
 
-        const currentpage = (page - 1) * pagesize;
+        const skip = (page - 1) * pagesize;
 
         const classes_count = await Class_schema.countDocuments();
 
@@ -101,7 +101,7 @@ export const getclasseslist = async (
                     }
                 }
             ]
-        }).skip(currentpage).limit(pagesize)
+        }).skip(skip).limit(pagesize)
 
         // Calculate total pages
         const total_pages = Math.ceil(classes_count / pagesize);
