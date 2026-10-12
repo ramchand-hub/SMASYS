@@ -4,7 +4,7 @@ export const createClassSchema = z.object({
     body: z.object({
         class_name: z.string().min(2),
         section: z.string().min(1),
-        max_students: z.number().min(1),
+        max_students: z.coerce.number().int().min(1),
         class_teacher: z.string().min(2).max(24)
     }),
 
@@ -13,7 +13,7 @@ export const createClassSchema = z.object({
 export const classlistSchema = z.object({
     query: z.object({
         page: z.coerce.number().int().min(1),
-        pagesize: z.string().min(2),
+        pagesize: z.coerce.number().int().min(1),
        searchquery:z.string().optional()
     }),
 
