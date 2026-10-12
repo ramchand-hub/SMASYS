@@ -42,7 +42,7 @@ export const getTeachers = async (
     const serachquery = req.query.searchquery || "";
     
     
-    const currentpage = (page - 1) * pagesize;
+    const skip = (page - 1) * pagesize;
 
     const teacher_count = await Teacher.countDocuments();
 
@@ -60,7 +60,7 @@ export const getTeachers = async (
           }
         }
       ]
-    }).skip(currentpage).limit(pagesize)
+    }).skip(skip).limit(pagesize)
 
     // Calculate total pages
     const total_pages = Math.ceil(teacher_count / pagesize);
