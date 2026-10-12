@@ -17,7 +17,6 @@ const ClassList = () => {
 
     const navigate = useNavigate()
     const location = useLocation()
-    console.log(location,"location")
     const [classDelete, setclassDelete] = useState<boolean>(false)
     const [Totalpages, setTotalPages] = useState<any>()
     const [classcount, setclasscount] = useState()
@@ -30,7 +29,6 @@ const ClassList = () => {
     const [classes, setClasses] = useState<any[]>([])
     useEffect(() => {
         if (location.state?.toast_message) {
-            console.log(location.state.toast_message)
             setToastmessage(location?.state?.toast_message);
             setToasttype(location.state?.toast_type);
             setShowtoast(true);
