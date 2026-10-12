@@ -65,18 +65,20 @@ const AddClass = () => {
   // Create / Update
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+const payload = {
+    ...formData,
+    max_students: Number(formData.max_students),
+  };
     try {
       let response;
 
       if (class_val) {
         response = await updateclass(
           class_val._id,
-          formData
+          payload
         );
       } else {
-        response = await create_class(formData);
-        console.log(response)
+        response = await create_class(payload);
       }
 
       if (response?.data?.success === true) {
@@ -198,7 +200,7 @@ const AddClass = () => {
               </label>
 
               <input
-                type="text"
+                type="number"
                 name="max_students"
                 value={formData.max_students}
                 onChange={handleChange}

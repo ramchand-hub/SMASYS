@@ -264,6 +264,10 @@ const ClassList = () => {
                                     Students
                                 </th>
 
+                                <th className="px-3 py-2 text-left text-[9px] font-semibold text-slate-500">
+                                    Teacher
+                                </th>
+
                                 <th className="px-3 py-2 text-center text-[9px] font-semibold text-slate-500">
                                     Action
                                 </th>
@@ -317,6 +321,10 @@ const ClassList = () => {
                                                 {cl.max_students}
                                             </td>
 
+                                            {/* max_students */}
+                                            <td className="px-3 py-2 text-[9px] text-slate-500">
+                                                {cl.teacher_name}
+                                            </td>
 
 
 
