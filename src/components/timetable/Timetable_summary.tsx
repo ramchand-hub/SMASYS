@@ -64,24 +64,24 @@ const TimetableList = () => {
   const [Totalpages, setTotalPages] = useState<any>()
   const [timetablecount, setTimetablecount] = useState()
   const [slots, setSlots] = useState<any[]>([])
- 
-useEffect(() => {
-  const fetchtimetablelist = async () => {
-    const response = await timetableList({
-      page: 1,
-      pagesize: 10,
-      ...(selectedClass && { class_id: selectedClass }),
-    });
 
-    if (response) {
-      setSlots(response?.data?.timetable_list);
-      setTotalPages(response?.data?.pagination?.totalpages);
-      setTimetablecount(response?.data?.pagination?.timetablecount);
-    }
-  };
+  useEffect(() => {
+    const fetchtimetablelist = async () => {
+      const response = await timetableList({
+        page: 1,
+        pagesize: 10,
+        ...(selectedClass && { class_id: selectedClass }),
+      });
 
-  fetchtimetablelist();
-}, [selectedClass]);
+      if (response) {
+        setSlots(response?.data?.timetable_list);
+        setTotalPages(response?.data?.pagination?.totalpages);
+        setTimetablecount(response?.data?.pagination?.timetablecount);
+      }
+    };
+
+    fetchtimetablelist();
+  }, [selectedClass]);
 
   const handlenext = () => {
 
@@ -94,7 +94,7 @@ useEffect(() => {
     }
 
   }
-  
+
 
 
   const getSubject = (
@@ -113,8 +113,8 @@ useEffect(() => {
   };
 
   const handleClassChange = (value: string) => {
-    
-    setSelectedClass(()=> value)
+
+    setSelectedClass(() => value)
   };
 
   return (
@@ -167,7 +167,7 @@ useEffect(() => {
 
                 {classes.map((item: any) => (
                   <option key={item._id} value={item._id}>
-                     {item?.class_name} - {item?.section.toUpperCase()}
+                    {item?.class_name} - {item?.section.toUpperCase()}
                   </option>
                 ))}
               </select>
