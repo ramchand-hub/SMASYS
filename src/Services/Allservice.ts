@@ -183,3 +183,37 @@ export async function teacheroptions(): Promise<any> {
 		throw error;
 	}
 }
+
+export async function create_timetable(data: any): Promise<any> {
+	try {
+		const response = await api.post('/timetables/createTimetable', data);
+		return response;
+	} catch (error) {
+		console.error("create_timetable API error:", error);
+		throw error;
+	}
+}
+
+export async function timetableList({page, pagesize, class_id}:{
+page:number,
+pagesize:number,
+class_id?:string
+}): Promise<any> {
+	try {
+		const response = await api.get('/timetables/timetablesList',
+			{
+				params: {
+					page,
+					pagesize,
+					      ...(class_id && {class_id }),
+
+				}
+
+			}
+		);
+		return response.data;
+	} catch (error) {
+		console.error("timetableList API error:", error);
+		throw error;
+	}
+}

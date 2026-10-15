@@ -35,11 +35,11 @@ const TeacherList = () => {
       setToastmessage(location?.state?.toast_message);
       setToasttype(location.state.toast_type);
       setShowtoast(true);
-
-      // Clear navigation state
       window.history.replaceState({}, document.title);
     }
   }, [location?.state])
+
+  
   const addstudent = () => {
     try {
       navigate("/student-add")
@@ -338,14 +338,14 @@ const TeacherList = () => {
 
 
                       {/* Dob */}
-                      <td className="px-3 py-2 text-center">
+                      <td className="px-3 py-2 text-[9px] text-slate-500 text-center">
 
                         {student.dob}
 
                       </td>
 
                       {/* Address */}
-                      <td className="px-3 py-2 text-center">
+                      <td className="px-3 py-2 text-[9px] text-slate-500 text-center">
 
                         {student.address}
 

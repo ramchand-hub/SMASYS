@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ChevronDown, Calendar } from "lucide-react";
 import {
+  classsList,
   create_student,
   update_student
 } from "../../Services/Allservice";
@@ -12,7 +13,7 @@ import {
 const Addstudent = () => {
   const navigate = useNavigate();
   const location = useLocation();
-
+  const [classoptions, setClassoptions] = useState([])
   const student = location.state?.student;
   const [formData, setFormData] = useState({
     first_name: "",
@@ -38,6 +39,21 @@ const Addstudent = () => {
       });
     }
   }, [student]);
+
+  useEffect(() => {
+    try {
+      const fetch_classList = async () => {
+        const response = await classsList(1, 100, "")
+        console.log(response, 'classes list api...')
+        setClassoptions(response?.data?.classeslist)
+      }
+
+      fetch_classList()
+    } catch (err) {
+      console.error(err)
+    }
+
+  }, [])
 
   // Common change handler
   const handleChange = (
@@ -161,12 +177,12 @@ const Addstudent = () => {
                   className="h-10 w-full appearance-none rounded-md border border-slate-200 bg-white px-3 pr-10 text-sm text-slate-500 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                 >
                   <option value="">Select Class</option>
-                  <option value="class1">class1</option>
-                  <option value="class2">class2</option>
-                  <option value="class3">class3</option>
-                  <option value="class4">class4</option>
-                  <option value="class5">class5</option>
+                  {
+                    classoptions?.map((classs: any) => (
+                      <option value={classs._id}>{classs.class_name} - {classs.section}</option>
 
+                    ))
+                  }
 
                 </select>
 
