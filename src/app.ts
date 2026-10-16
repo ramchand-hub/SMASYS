@@ -48,9 +48,23 @@ app.use((req, res) => {
 });
 
 app.use(errorHandler);
-app.listen(PORT, async () => {
-  await connectDB();
-  // const redisclient =  redis_connect();
-  console.log(`Auth service running on port ${PORT}`);
-});
+// app.listen(PORT, async () => {
+//   await connectDB();
+//   // const redisclient =  redis_connect();
+//   console.log(`Auth service running on port ${PORT}`);
+// });
+const startServer = async () => {
+  try {
+    await connectDB();
+
+    app.listen(PORT, () => {
+      console.log(`Auth service running on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error("Failed to start Authentication Service:", error);
+    process.exit(1);
+  }
+};
+
+startServer();
 export default app;
