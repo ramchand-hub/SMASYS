@@ -10,7 +10,6 @@ const connectDB = async () => {
     maxPoolSize: 40,
     maxIdleTimeMS: 10,
   });
-  console.log(uri,"MongoDB connected");
 };
 
 export default connectDB;
