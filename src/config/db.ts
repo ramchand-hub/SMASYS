@@ -1,9 +1,10 @@
 import mongoose from "mongoose";
-import webconfig from "../../webconfig.json";
-
+import "dotenv/config";
+import dns from "node:dns"
 const connectDB = async () => {
-  const uri = webconfig?.mongoUri ;
-  
+  const uri = process?.env?.MONGO_URI as string;
+  dns.setServers(["8.8.8.8"]);
+  console.log(uri)
   await mongoose.connect(uri, {
     minPoolSize: 10,
     serverSelectionTimeoutMS: 5000,
