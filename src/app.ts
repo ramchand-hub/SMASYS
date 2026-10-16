@@ -37,6 +37,10 @@ app.use(cors({
 
 app.use(express.json());
 app.use("/", mainRouter);
+app.get("/metrics", async (req, res) => {
+  res.set("Content-Type", client.register.contentType);
+  res.end(await client.register.metrics());
+});
 app.use((req, res) => {
   res.status(404).json({
     status: 404,
@@ -45,13 +49,24 @@ app.use((req, res) => {
 });
 
 app.use(errorHandler);
-app.get("/metrics", async (req, res) => {
-  res.set("Content-Type", client.register.contentType);
-  res.end(await client.register.metrics());
-});
-app.listen(PORT, async () => {
-  await connectDB();
-  // const redisclient =  redis_connect();
-  console.log(`Auth service running on port ${PORT}`);
-});
+
+// app.listen(PORT, async () => {
+//   await connectDB();
+//   // const redisclient =  redis_connect();
+//   console.log(`Auth service running on port ${PORT}`);
+// });
+const startServer = async () => {
+  try {
+    await connectDB();
+
+    app.listen(PORT, () => {
+      console.log(`Auth service running on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error("Failed to start Authentication Service:", error);
+    process.exit(1);
+  }
+};
+
+startServer();
 export default app;
