@@ -33,32 +33,69 @@ router.post("/register", async (req: Request, res: Response) => {
   }
 });
 
+// router.post("/login", async (req: Request, res: Response) => {
+//   try {
+//     const result = req.body;
+
+//     const api_res = await axiosHandler({
+//       method: "POST",
+//       url: `${config?.authentication}/auth/login`,
+//       data: result,
+//     });
+
+
+//     if (api_res?.statusCode === 200) {
+//       const user_id = api_res?.response?.data?._id;
+//       const encrypt_id =await encrypt(user_id, config?.encrypt_secret)
+//       const token = jwt.sign({ encrypt_id }, config?.JWT_SECRET as string, {
+//         expiresIn: "1h",
+//       });
+//       return send_success(res, api_res?.response?.message, {
+//         name: api_res?.response?.data?.name,
+//         email: api_res?.response?.data?.email,
+//         token
+
+//       }
+//       );
+//     }
+//   } catch (error: any) {
+//     return send_fail(res, error.message);
+//   }
+// });
 router.post("/login", async (req: Request, res: Response) => {
   try {
-    const result = req.body;
+    const url = `${config.authentication.replace(/\/$/, "")}/auth/login`;
+
+    console.log("Calling Authentication Service:", url);
 
     const api_res = await axiosHandler({
       method: "POST",
-      url: `${config?.authentication}/auth/login`,
-      data: result,
+      url,
+      data: req.body,
     });
 
+    console.log("Authentication response status:", api_res?.statusCode);
 
     if (api_res?.statusCode === 200) {
       const user_id = api_res?.response?.data?._id;
-      const encrypt_id =await encrypt(user_id, config?.encrypt_secret)
-      const token = jwt.sign({ encrypt_id }, config?.JWT_SECRET as string, {
-        expiresIn: "1h",
-      });
+      const encrypt_id = await encrypt(user_id, config.encrypt_secret);
+
+      const token = jwt.sign(
+        { encrypt_id },
+        config.JWT_SECRET as string,
+        { expiresIn: "1h" }
+      );
+
       return send_success(res, api_res?.response?.message, {
         name: api_res?.response?.data?.name,
         email: api_res?.response?.data?.email,
-        token
-
-      }
-      );
+        token,
+      });
     }
+
+    return send_fail(res, "Authentication request failed");
   } catch (error: any) {
+    console.error("Login gateway error:", error.message);
     return send_fail(res, error.message);
   }
 });
