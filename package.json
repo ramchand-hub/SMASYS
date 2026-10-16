@@ -3,11 +3,12 @@
   "version": "1.0.0",
   "description": "School management backend - Express + MongoDB",
   "main": "dist/server.js",
+ 
   "scripts": {
-    "start": "ts-node-dev --respawn src/app.ts",
-    "build": "webpack --mode production",
-    "dev": "webpack --mode development --watch"
-  },
+  "dev": "ts-node-dev --respawn src/app.ts",
+  "build": "tsc",
+  "start": "node dist/app.js"
+},
   "keywords": [],
   "author": "",
   "license": "MIT",
