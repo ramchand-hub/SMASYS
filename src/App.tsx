@@ -12,6 +12,8 @@ import ClassList from './components/classes/Class_summary';
 import AddClass from './components/classes/Class_add'
 import AddTimetable from './components/timetable/Timetable_add';
 import TimetableList from './components/timetable/Timetable_summary';
+import AttendanceList from './components/attendance/Attendance_summary';
+import AddAttendance from "./components/attendance/Attendance_add"
 function App() {
   return (
     <BrowserRouter>
@@ -26,10 +28,12 @@ function App() {
           <Route path="/students" element={<Student_summary />} />
           <Route path="/classes" element={<ClassList />} />
           <Route path="/timetable" element={<TimetableList />} />
+          <Route path="/attendance" element={<AttendanceList />} />
           <Route path="/student-add" element={<Student_Add />} />
           <Route path="/teachers-add" element={< AddTeacher />} />
           <Route path="/classes-add" element={<AddClass />} />
           <Route path="/timetable-add" element={<AddTimetable />} />
+          <Route path="/attendance-add" element={<AddAttendance />} />
 
         </Route>
 

@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { FaHome, FaUserGraduate, FaTimes, FaChalkboardTeacher, FaSchool,FaCalendarAlt  } from "react-icons/fa";
+import { FaHome, FaUserGraduate, FaTimes, FaChalkboardTeacher, FaSchool, FaCalendarAlt, FaClipboardCheck } from "react-icons/fa";
 
 const Sidebar = ({ open, setOpen }: any) => {
   return (
@@ -71,6 +71,17 @@ const Sidebar = ({ open, setOpen }: any) => {
           >
             <FaCalendarAlt />
             Timetable
+          </NavLink>
+
+          <NavLink
+            to="/attendance"
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-5 py-3 hover:bg-blue-600 ${isActive ? "bg-blue-600" : ""
+              }`
+            }
+          >
+            <FaClipboardCheck />
+            Attendance
           </NavLink>
 
         </nav>
