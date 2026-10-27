@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
     CalendarDays,
     Search,
@@ -10,6 +10,8 @@ import {
     ChevronDown,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import useclass from "../../custom_hooks/Useclass";
+import usestudent from "../../custom_hooks/Usestudents";
 type AttendanceStatus = "present" | "absent" | "leave" | null;
 
 interface Student {
@@ -18,19 +20,9 @@ interface Student {
     first_name: string;
     last_name: string;
     status: AttendanceStatus;
-    remarks: string;
 }
 
-const initialStudents: Student[] = [
-    { _id: "1", rollno: "1001", first_name: "Arun", last_name: "Sharma", status: "present", remarks: "" },
-    { _id: "2", rollno: "1002", first_name: "Diya", last_name: "Patel", status: "present", remarks: "" },
-    { _id: "3", rollno: "1003", first_name: "Rohan", last_name: "Mehta", status: "absent", remarks: "Sick" },
-    { _id: "4", rollno: "1004", first_name: "Sneha", last_name: "Gupta", status: "present", remarks: "" },
-    { _id: "5", rollno: "1005", first_name: "Kartik", last_name: "Singh", status: "present", remarks: "" },
-    { _id: "6", rollno: "1006", first_name: "Ananya", last_name: "Verma", status: "present", remarks: "" },
-    { _id: "7", rollno: "1007", first_name: "Vikram", last_name: "Rao", status: "present", remarks: "" },
-    { _id: "8", rollno: "1008", first_name: "Pooja", last_name: "Iyer", status: null, remarks: "" },
-];
+
 
 const getToday = () => {
     const now = new Date();
@@ -43,22 +35,34 @@ const CreateAttendance = () => {
     const [selectedSection, setSelectedSection] = useState("");
     const [selectedDate, setSelectedDate] = useState(getToday());
     const [search, setSearch] = useState("");
-    const [students, setStudents] = useState<Student[]>(initialStudents);
+    const [students, setStudents] = useState<Student[]>([]);
     const [selectedStudents, setSelectedStudents] = useState<string[]>([]);
     const [page, setPage] = useState(1);
     const navigate = useNavigate()
-
+    const { classes } = useclass();
+    const { studentss } = usestudent();
     const pageSize = 8;
 
     const filteredStudents = useMemo(() => {
         const query = search.toLowerCase().trim();
 
-        return students.filter((student) =>
+        return studentss.filter((student: any) =>
             `${student.rollno} ${student.first_name} ${student.last_name}`
                 .toLowerCase()
                 .includes(query)
         );
     }, [students, search]);
+
+    useEffect(() => {
+        if (studentss) {
+            setStudents(
+                studentss.map((student: any) => ({
+                    ...student,
+                    status: null,
+                }))
+            );
+        }
+    }, [studentss]);
 
     const totalPages = Math.ceil(filteredStudents.length / pageSize);
 
@@ -67,32 +71,32 @@ const CreateAttendance = () => {
         page * pageSize
     );
 
-    const presentCount = students.filter((s) => s.status === "present").length;
-    const absentCount = students.filter((s) => s.status === "absent").length;
-    const leaveCount = students.filter((s) => s.status === "leave").length;
-    const notMarkedCount = students.filter((s) => s.status === null).length;
+    const presentCount = studentss.filter((s: any) => s.status === "present").length;
+    const absentCount = studentss.filter((s: any) => s.status === "absent").length;
+    const leaveCount = studentss.filter((s: any) => s.status === "leave").length;
+    const notMarkedCount = studentss.filter((s: any) => s.status === null).length;
 
     const updateStatus = (id: string, status: AttendanceStatus) => {
-        setStudents((prev) =>
-            prev.map((student) =>
+        setStudents((prev: any) =>
+            prev?.map((student: any) =>
                 student._id === id ? { ...student, status } : student
             )
         );
     };
 
-    const updateRemarks = (id: string, remarks: string) => {
-        setStudents((prev) =>
-            prev.map((student) =>
-                student._id === id ? { ...student, remarks } : student
-            )
-        );
-    };
+    // const updateRemarks = (id: string, remarks: string) => {
+    //     setStudents((prev) =>
+    //         prev.map((student) =>
+    //             student._id === id ? { ...student, remarks } : student
+    //         )
+    //     );
+    // };
 
-    const markAll = (status: AttendanceStatus) => {
-        setStudents((prev) =>
-            prev.map((student) => ({ ...student, status }))
-        );
-    };
+    // const markAll = (status: AttendanceStatus) => {
+    //     setStudents((prev) =>
+    //         prev.map((student) => ({ ...student, status }))
+    //     );
+    // };
 
     const toggleStudent = (id: string) => {
         setSelectedStudents((prev) =>
@@ -103,7 +107,7 @@ const CreateAttendance = () => {
     };
 
     const toggleAllVisible = () => {
-        const visibleIds = paginatedStudents.map((student) => student._id);
+        const visibleIds = paginatedStudents.map((student: any) => student._id);
         const allSelected = visibleIds.every((id) => selectedStudents.includes(id));
 
         setSelectedStudents((prev) =>
@@ -114,7 +118,7 @@ const CreateAttendance = () => {
     };
 
     const handleSave = () => {
-        if (!selectedClass || !selectedSection || !selectedDate) {
+        if (!selectedClass || !selectedDate) {
             alert("Please select class, section and date.");
             return;
         }
@@ -124,26 +128,27 @@ const CreateAttendance = () => {
             return;
         }
 
+
         const payload = {
             class: selectedClass,
-            section: selectedSection,
             date: selectedDate,
-            attendance: students.map((student) => ({
+            attendance: students?.map((student: any) =>
+
+            ({
                 student_id: student._id,
-                status: student.status,
-                remarks: student.remarks,
+                status: student.status
             })),
         };
 
-        console.log("Attendance Payload:", payload);
 
-        // Call your attendance API here.
+        navigate("/attendance")
+
     };
 
     const summaryCards = [
         {
             label: "Total Students",
-            count: students.length,
+            count: studentss.length,
             icon: Users,
             bg: "bg-blue-50",
             color: "text-blue-600",
@@ -205,14 +210,19 @@ const CreateAttendance = () => {
                             value={selectedClass}
                             onChange={(e) => {
                                 setSelectedClass(e.target.value);
-                                setSelectedSection("");
                             }}
                             className="h-10 w-full appearance-none rounded-md border border-slate-200 bg-white px-3 pr-9 text-xs text-slate-600 outline-none focus:border-blue-500"
                         >
                             <option value="">Select Class</option>
-                            <option value="8">8th Grade</option>
-                            <option value="9">9th Grade</option>
-                            <option value="10">10th Grade</option>
+                            {
+                                classes.map((item: any) => (
+                                    <option value={item?._id}>{item?.class_name} - {item?.section.toUpperCase()}</option>
+
+                                )
+                                )
+                            }
+
+
                         </select>
 
                         <ChevronDown
@@ -222,29 +232,7 @@ const CreateAttendance = () => {
                     </div>
                 </div>
 
-                <div>
-                    <label className="mb-2 block text-xs font-semibold text-slate-700">
-                        Section
-                    </label>
 
-                    <div className="relative">
-                        <select
-                            value={selectedSection}
-                            onChange={(e) => setSelectedSection(e.target.value)}
-                            className="h-10 w-full appearance-none rounded-md border border-slate-200 bg-white px-3 pr-9 text-xs text-slate-600 outline-none focus:border-blue-500"
-                        >
-                            <option value="">Select Section</option>
-                            <option value="a">Section A</option>
-                            <option value="b">Section B</option>
-                            <option value="c">Section C</option>
-                        </select>
-
-                        <ChevronDown
-                            size={15}
-                            className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"
-                        />
-                    </div>
-                </div>
 
                 <div>
                     <label className="mb-2 block text-xs font-semibold text-slate-700">
@@ -320,7 +308,7 @@ const CreateAttendance = () => {
                         />
                     </div>
 
-                    <div className="flex flex-wrap gap-2">
+                    {/* <div className="flex flex-wrap gap-2">
                         <button
                             type="button"
                             onClick={() => markAll("present")}
@@ -338,7 +326,7 @@ const CreateAttendance = () => {
                             <XCircle size={16} />
                             Mark All Absent
                         </button>
-                    </div>
+                    </div> */}
                 </div>
 
                 <div className="overflow-x-auto">
@@ -350,7 +338,7 @@ const CreateAttendance = () => {
                                         type="checkbox"
                                         checked={
                                             paginatedStudents.length > 0 &&
-                                            paginatedStudents.every((student) =>
+                                            paginatedStudents.every((student: any) =>
                                                 selectedStudents.includes(student._id)
                                             )
                                         }
@@ -361,12 +349,11 @@ const CreateAttendance = () => {
                                 <th className="px-4 py-3">Roll No.</th>
                                 <th className="px-4 py-3">Student Name</th>
                                 <th className="px-4 py-3">Attendance Status</th>
-                                <th className="px-4 py-3">Remarks (Optional)</th>
                             </tr>
                         </thead>
 
                         <tbody>
-                            {paginatedStudents.map((student) => (
+                            {students.map((student: any) => (
                                 <tr
                                     key={student._id}
                                     className="border-b border-slate-100 text-xs text-slate-700 hover:bg-slate-50"
@@ -403,8 +390,9 @@ const CreateAttendance = () => {
                                                 >
                                                     <input
                                                         type="radio"
+                                                        value={value}
                                                         name={`attendance-${student._id}`}
-                                                        checked={student.status === value}
+                                                        // checked={student.status === value}
                                                         onChange={() => updateStatus(student._id, value)}
                                                         className={`h-4 w-4 ${inputColor}`}
                                                     />
@@ -414,21 +402,11 @@ const CreateAttendance = () => {
                                         </div>
                                     </td>
 
-                                    <td className="px-4 py-3">
-                                        <input
-                                            type="text"
-                                            value={student.remarks}
-                                            onChange={(e) =>
-                                                updateRemarks(student._id, e.target.value)
-                                            }
-                                            placeholder="Enter remarks..."
-                                            className="h-9 w-full min-w-[180px] rounded-md border border-slate-200 px-3 text-xs outline-none focus:border-blue-500"
-                                        />
-                                    </td>
+
                                 </tr>
                             ))}
 
-                            {paginatedStudents.length === 0 && (
+                            {studentss.length === 0 && (
                                 <tr>
                                     <td
                                         colSpan={5}
@@ -469,8 +447,8 @@ const CreateAttendance = () => {
                                 key={index}
                                 onClick={() => setPage(index + 1)}
                                 className={`rounded-md px-3 py-2 text-xs ${page === index + 1
-                                        ? "bg-blue-600 text-white"
-                                        : "border border-slate-200 text-slate-600"
+                                    ? "bg-blue-600 text-white"
+                                    : "border border-slate-200 text-slate-600"
                                     }`}
                             >
                                 {index + 1}
