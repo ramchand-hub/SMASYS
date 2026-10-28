@@ -3,15 +3,16 @@
   "version": "1.0.0",
   "description": "School management backend - Express + MongoDB",
   "main": "dist/server.js",
-    "scripts": {
-  "dev": "ts-node-dev --respawn src/app.ts",
-  "build": "tsc",
-  "start": "node dist/app.js"
-},
+  "scripts": {
+    "dev": "ts-node-dev --respawn src/app.ts",
+    "build": "tsc",
+    "start": "node dist/app.js"
+  },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "axios": "^1.21.0",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",
