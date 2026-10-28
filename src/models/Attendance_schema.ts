@@ -6,7 +6,7 @@ interface student_attendance {
 
 export interface Iattendance extends Document {
     class_id: Types.ObjectId;
-    date: Date;
+    date: String;
     attendance: student_attendance[];
     createdAt?: Date;
     updatedAt?: Date;
@@ -18,7 +18,7 @@ const student_attendanceSchema = new Schema<student_attendance>({
 })
 const attendance_schema = new Schema<Iattendance>({
     class_id: { type: Schema.Types.ObjectId, ref: "class", required: true },
-    date: { type: Date, required: true },
+    date: { type: String, required: true },
     attendance: { type: [student_attendanceSchema], required: true }
 })
 attendance_schema.index(
