@@ -10,10 +10,15 @@ router.post("/createAttendance", async (req: Request, res: Response) => {
 
     try {
         const result = req.body;
+        const { page, pagesize } = req.query;
         const api_res = await axiosHandler({
             method: "POST",
             url: `${config?.teacher_microservice}/attendance/createAttendance`,
             data: result,
+            params: {
+                page: page,
+                pagesize: pagesize,
+            }
         });
 
         if (
@@ -37,17 +42,18 @@ router.post("/createAttendance", async (req: Request, res: Response) => {
     }
 })
 
-router.get("/AttendanceList", async (req: Request, res: Response) => {
+router.get("/Attendancelist", async (req: Request, res: Response) => {
 
     try {
-        const { page, pagesize, class_id } = req.query;
+        const { page, pagesize, class_id, require_date } = req.query;
         const api_res = await axiosHandler({
             method: "GET",
-            url: `${config?.teacher_microservice}/attendance/AttendanceList`,
+            url: `${config?.teacher_microservice}/attendance/Attendancelist`,
             params: {
                 page,
                 pagesize,
-                class_id
+                class_id,
+                require_date
             }
         });
 
