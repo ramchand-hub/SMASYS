@@ -2,6 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import { successResponse, errorResponse } from "../utils/messages";
 import attendance from "../models/Attendance_schema"
 import axios from "axios"
+import mongoose from "mongoose";
+
 export const create_attendance = async (
     req: Request,
     res: Response,
@@ -9,7 +11,8 @@ export const create_attendance = async (
 ) => {
     try {
         const result = req.body;
-
+        const page = Number(req.query.page) || 1;
+        const pagesize = Number(req.query.pagesize) || 10;
         // ---------- Convert date from DD-MM-YYYY to Date ----------
         let parsedDate: Date;
 
@@ -43,15 +46,15 @@ export const create_attendance = async (
             }
         }
 
-        result.date = parsedDate;
+        result.date = parsedDate.getTime();
 
         // ---------- Fetch students from Student microservice ----------
         const student_res = await axios.get(
             "http://localhost:3002/students/getStudentsList",
             {
                 params: {
-                    page: 1,
-                    pagesize: 100,
+                    page: page,
+                    pagesize: pagesize,
                 },
             }
         );
@@ -141,26 +144,58 @@ export const timetablelist = async (
         const page = Number(req.query.page || 1);
         const pagesize = Number(req.query.pagesize || 10);
         const class_id = req.query.class_id;
+        const date = req.query.require_date;
         const skip = (page - 1) * pagesize;
-        const filter = class_id ? { class_id } : {};
+        const filter: any = {};
+        if (class_id) {
+            filter.class_id = new mongoose.Types.ObjectId(class_id as string);
+        }
+        if (date) {
+            const [day, month, year] = (date as string).split("-");
 
-        const timetable_list = await attendance.find(filter).sort({ day: 1, _id: 1 }).skip(skip).limit(pagesize);
-        const timetablecount = await attendance.countDocuments(filter);
-        const totalpages = Math.ceil(timetablecount / pagesize)
+            const startDate = new Date(
+                `${year}-${month}-${day}T00:00:00+05:30`
+            );
+
+            filter.date = startDate.getTime();
+        }
+        const records = await attendance.find({
+            class_id: new mongoose.Types.ObjectId(class_id as string)
+        }).lean();
+
+        const attendance_list = await attendance.aggregate([
+            {
+                $match: filter
+            },
+            {
+                $sort: {
+                    _id: 1
+                }
+            },
+            {
+                $skip: skip
+            },
+            {
+                $limit: pagesize
+            }
+        ]);
+
+        const attendance_list_count = await attendance.countDocuments(filter);
+        const totalpages = Math.ceil(attendance_list_count / pagesize)
         const pagination = {
             page: page,
             pagesize: pagesize,
-            timetablecount,
+            attendance_list_count,
             totalpages
         }
-        if (timetable_list?.length > 0) {
-            return res.status(201).json(successResponse("Timetable list fetched successfully ", {
-                timetable_list,
+        if (attendance_list?.length > 0) {
+            return res.status(201).json(successResponse("attendance_list fetched successfully ", {
+                attendance_list,
                 pagination
             }));
 
         } else {
-            return res.status(400).json(errorResponse("Timetable is not found"))
+            return res.status(400).json(errorResponse("attendance_list is not found"))
 
         }
 
