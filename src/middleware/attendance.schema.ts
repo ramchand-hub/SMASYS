@@ -12,3 +12,13 @@ export const createAttendanceSchema = z.object({
   }),
 
 });
+
+export const AttendancelistSchema = z.object({
+  query: z.object({
+        page: z.coerce.number().int().min(1),
+        pagesize: z.coerce.number().int().min(1),
+        class_id:z.string().min(1).max(24),
+        require_date:z.string().date()
+    }),
+
+});

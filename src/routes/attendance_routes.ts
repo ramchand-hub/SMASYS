@@ -2,9 +2,10 @@ import Router from "express"
 import { verifyToken } from "../utils/messages/verify_token"
 import attendance_controller from "../controllers/attendance_controller"
 import { createAttendanceSchema } from "../middleware/attendance.schema"
+import { AttendancelistSchema } from "../middleware/attendance.schema"
 import validate from "../middleware/validation"
 const router = Router()
 router.post("/createAttendance", verifyToken, validate(createAttendanceSchema),attendance_controller)
-router.get("/Attendancelist", verifyToken, attendance_controller)
+router.get("/Attendancelist", verifyToken, validate(AttendancelistSchema),attendance_controller)
 
 export default router
