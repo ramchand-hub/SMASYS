@@ -159,9 +159,7 @@ export const timetablelist = async (
 
             filter.date = startDate.getTime();
         }
-        const records = await attendance.find({
-            class_id: new mongoose.Types.ObjectId(class_id as string)
-        }).lean();
+        
 
         const attendance_list = await attendance.aggregate([
             {
