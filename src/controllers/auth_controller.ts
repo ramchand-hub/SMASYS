@@ -7,6 +7,8 @@ import logger from "../utils/messages/logger";
 import jwt from "jsonwebtoken";
 import multer_config from "../multer/multer_config";
 import { encrypt } from "../utils/messages/enc_dec";
+import { createHash } from "crypto";
+import { setkey } from "../utils/messages/redis_key";
 const router = Router();
 
 router.post("/register", async (req: Request, res: Response) => {
@@ -46,14 +48,28 @@ router.post("/login", async (req: Request, res: Response) => {
 
     if (api_res?.statusCode === 200) {
       const user_id = api_res?.response?.data?._id;
-      const encrypt_id =await encrypt(user_id, config?.encrypt_secret)
-      const token = jwt.sign({ encrypt_id }, config?.JWT_SECRET as string, {
-        expiresIn: "1h",
-      });
+      const encrypt_id = await encrypt(user_id, config?.encrypt_secret)
+      // Generate access token
+      const token = jwt.sign(
+        { encrypt_id },
+        config?.JWT_SECRET as string,
+        { expiresIn: "15m" }
+      );
+
+      // Generate refresh token
+      const refreshToken = jwt.sign(
+        { encrypt_id },
+        config?.JWT_REFRESH_SECRET as string,
+        { expiresIn: "7d" }
+      );
+      
+      const hashed_refresh = createHash("sha256").update(refreshToken).digest("hex");
+      await setkey(`refresh:${hashed_refresh}`, encrypt_id, 7*24*60*60)
       return send_success(res, api_res?.response?.message, {
         name: api_res?.response?.data?.name,
         email: api_res?.response?.data?.email,
-        token
+        token,
+        refreshToken
 
       }
       );

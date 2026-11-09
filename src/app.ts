@@ -4,6 +4,7 @@ import cors from "cors"
 import { routes } from "./routes/routes"
 import helmet from "helmet"
 import logger from "./utils/messages/logger"
+import { redis_connect } from "./config/redis"
 const app = express()
 const port = 4000
 const base_url = config?.base_url;
@@ -48,6 +49,21 @@ app.use((req, res, next) => {
 
   next();
 });
-app.listen(port, async()=>{
-    console.log(`gateway is running in ${port}`)
-})  
+// app.listen(port, async()=>{
+//     console.log(`gateway is running in ${port}`)
+// })  
+
+const startServer = async () => {
+  try {
+    await redis_connect();
+
+    app.listen(port, () => {
+      console.log(`Server running on port ${port}`);
+    });
+  } catch (error) {
+    console.error("Failed to start API Gateway:", error);
+    process.exit(1);
+  }
+};
+
+startServer();
