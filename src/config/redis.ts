@@ -1,20 +1,22 @@
 import { createClient } from "redis";
 
-const redis_connect = () => {
-const client = createClient({
-  socket: {
-    host: "doctor-statement-bubble-95358.db.redis.io",
-    port: 10592,
-  },
-  password: "YOUR_PASSWORD",
-});
+const redis_connect = async () => {
+  const client = createClient({
+    socket: {
+      host: "smasys-redis",
+      port: 6379,
+    },
+  });
 
   client.on("error", (err) => {
     console.log("Redis error:", err);
   });
 
-  client.connect();
-  return client
+  await client.connect();
+
+  console.log("Redis connected successfully");
+
+  return client;
 };
 
 export default redis_connect;

@@ -50,15 +50,11 @@ app.use((req, res) => {
 
 app.use(errorHandler);
 
-// app.listen(PORT, async () => {
-//   await connectDB();
-//   // const redisclient =  redis_connect();
-//   console.log(`Auth service running on port ${PORT}`);
-// });
+
 const startServer = async () => {
   try {
     await connectDB();
-
+    await redis_connect()
     app.listen(PORT, () => {
       console.log(`Auth service running on port ${PORT}`);
     });
