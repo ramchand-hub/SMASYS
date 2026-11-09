@@ -68,8 +68,8 @@ router.post("/login", async (req: Request, res: Response) => {
       return send_success(res, api_res?.response?.message, {
         name: api_res?.response?.data?.name,
         email: api_res?.response?.data?.email,
-        token,
-        refreshToken
+        token:token,
+        refreshToken:refreshToken
 
       }
       );
