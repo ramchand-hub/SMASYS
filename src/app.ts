@@ -1,10 +1,13 @@
+import dotenv from "dotenv"
+dotenv.config()
+
 import express, { Request, Response } from "express";
 import morgan from "morgan";
 import cors from "cors";
 import errorHandler from "./middleware/errorHandler";
 import mainRouter from "./routes/mainRote";
 import connectDB from "./config/db";
-import redis_connect from "./config/redis";
+import {redis_connect} from "./config/redis";
 // import "./streams/Readble_stream"
 const app = express();
 const PORT = process.env.PORT || 3001;

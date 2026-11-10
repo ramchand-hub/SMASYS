@@ -1,22 +1,20 @@
 import { createClient } from "redis";
 
+const redisClient = createClient({
+  url: process.env.REDIS_URL || "redis://smasys-redis:6379",
+});
+
+redisClient.on("error", (err) => {
+  console.log("Redis Error:", err);
+});
+
 const redis_connect = async () => {
-  const client = createClient({
-    socket: {
-      host: "smasys-redis",
-      port: 6379,
-    },
-  });
+  if (!redisClient.isOpen) {
+    await redisClient.connect();
+    console.log("Redis connected successfully");
+  }
 
-  client.on("error", (err) => {
-    console.log("Redis error:", err);
-  });
-
-  await client.connect();
-
-  console.log("Redis connected successfully");
-
-  return client;
+  return redisClient;
 };
 
-export default redis_connect;
+export { redisClient, redis_connect };
