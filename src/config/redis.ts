@@ -2,7 +2,8 @@ import { createClient } from "redis";
 
 const redisClient = createClient({
   socket: {
-    host: "smasys-redis",
+    // host: "smasys-redis",
+    host: "localhost",
     port: 6379,
   },
 });
