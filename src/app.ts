@@ -1,3 +1,6 @@
+import dotenv from "dotenv"
+dotenv.config()
+
 import express from "express"
 import config from '../webconfig.json'
 import cors from "cors"
@@ -5,12 +8,13 @@ import { routes } from "./routes/routes"
 import helmet from "helmet"
 import logger from "./utils/messages/logger"
 import { redis_connect } from "./config/redis"
+
+
 const app = express()
 const port = 4000
 const base_url = config?.base_url;
 const client = require("prom-client")
 client.collectDefaultMetrics();
-
 app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
@@ -49,10 +53,7 @@ app.use((req, res, next) => {
 
   next();
 });
-// app.listen(port, async()=>{
-//     console.log(`gateway is running in ${port}`)
-// })  
-
+ 
 const startServer = async () => {
   try {
     await redis_connect();
