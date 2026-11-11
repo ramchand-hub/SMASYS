@@ -27,8 +27,14 @@
 
 import { createClient } from "redis";
 
+const redisUrl =
+  process.env.NODE_ENV === "production"
+    ? process.env.REDIS_URL
+    : "redis://localhost:6379";
+
+
 const redisClient = createClient({
-  url: process.env.REDIS_URL || "redis://smasys-redis:6379",
+  url: redisUrl,
 });
 
 redisClient.on("error", (err) => {
