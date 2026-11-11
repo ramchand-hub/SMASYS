@@ -1,6 +1,6 @@
 {
    
-    "authentication" : "https://smasys-1.onrender.com",
+   "authentication" : "https://smasys-1.onrender.com",
     "student_microservice" : "https://smasys-student.onrender.com",
     "teacher_microservice" : "https://smasys-teacher.onrender.com",
     "base_url":"/smsys",
