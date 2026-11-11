@@ -13,7 +13,5 @@ const config = {
 
 const environment = process.env.NODE_ENV || "development";
 
-console.log("Current environment:", environment);
-
 export const appConfig =
   config[environment as keyof typeof config];
