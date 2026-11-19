@@ -187,7 +187,7 @@ export const create_attendance = async (
         }
 
         // ---------- Fetch students from Student microservice ----------
-        const studentUrl = "http://localhost:3002/students/getStudentsList";
+        const studentUrl = `${process.env.STUDENT_SERVICE_URL}/students/getStudentsList`;
 
         const pagesize = 100;
 
@@ -403,8 +403,8 @@ export const timetablelist = async (
         ]);
 
         // ---------- Fetch all students ----------
-        const studentUrl =
-            "http://localhost:3002/students/getStudentsList";
+      
+            const studentUrl = `${process.env.STUDENT_SERVICE_URL}/students/getStudentsList`;
 
         const studentPageSize = 100;
 
