@@ -1,43 +1,12 @@
-import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, } from "react-router-dom";
 import { Plus, ChevronDown } from "lucide-react";
-import { timetableList } from "../../Services/Allservice";
+import { attendanceList } from "../../Services/Allservice";
 import Pagination from "../../common/Pagination";
 import useclass from "../../custom_hooks/Useclass";
-type Day =
-    | "monday"
-    | "tuesday"
-    | "wednesday"
-    | "thursday"
-    | "friday"
-    | "saturday";
+import Toaster from "../../common/toaster";
 
-interface ClassOption {
-    _id: string;
-    class_name: string;
-    section: string;
-}
-
-
-const days: Day[] = [
-    "monday",
-    "tuesday",
-    "wednesday",
-    "thursday",
-    "friday",
-    "saturday",
-];
-
-const formatTime = (time: string) => {
-    const [hour, minute] = time.split(":").map(Number);
-    const period = hour >= 12 ? "PM" : "AM";
-    const formattedHour = hour % 12 || 12;
-
-    return `${String(formattedHour).padStart(2, "0")}:${String(
-        minute
-    ).padStart(2, "0")} ${period}`;
-};
-
+type ToastType = "success" | "error" | "warning" | "info";
 
 const AttendanceList = () => {
     const navigate = useNavigate();
@@ -48,60 +17,97 @@ const AttendanceList = () => {
     const [Totalpages, setTotalPages] = useState<any>()
     const [attendancecount, setAttendancecount] = useState()
     const [attendancelist, setAttendancelist] = useState<any[]>([])
-    const [selectedDate, setSelectedDate] = useState(
-        new Date().toLocaleDateString("en-CA")
-    );
+    const [toast_message, setToastmessage] = useState("")
+    const [toast_type, setToasttype] = useState<ToastType>("success")
+    const [showtoast, setShowtoast] = useState(false)
+
+    const getToday = () => {
+        const now = new Date();
+
+        const day = String(now.getDate()).padStart(2, "0");
+        const month = String(now.getMonth() + 1).padStart(2, "0");
+        const year = now.getFullYear();
+
+        return `${year}-${month}-${day}`;
+    };
+
+    const formatDate = (date: string) => {
+        const [year, month, day] = date.split("-");
+        return `${day}-${month}-${year}`;
+    };
+    const handleClassChange = (value: string) => {
+        setSelectedClass(value);
+        setPage(1);
+    };
+
+    const handleDateChange = (value: string) => {
+        setSelectedDate(value);
+        setPage(1);
+    };
+
+    const [selectedDate, setSelectedDate] = useState(getToday());
+
     useEffect(() => {
         const fetchtimetablelist = async () => {
-            const response = await timetableList({
-                page: 1,
-                pagesize: 10,
-                ...(selectedClass && { class_id: selectedClass }),
-            });
+            try {
+                const response = await attendanceList({
+                    page: page,
+                    pagesize: pagesize,
+                    class_id: selectedClass,
+                    require_date: selectedDate ? formatDate(selectedDate) : ""
+                });
 
-            if (response) {
-                setAttendancelist(response?.data?.timetable_list);
-                setTotalPages(response?.data?.pagination?.totalpages);
-                setAttendancecount(response?.data?.pagination?.timetablecount);
+                if (response?.success === true) {
+                    setAttendancelist(
+                        response?.data?.attendance_list || []
+                    );
+
+                    setTotalPages(
+                        response?.data?.pagination?.totalpages || 0
+                    );
+
+                    setAttendancecount(
+                        response?.data?.pagination?.attendance_list_count || 0
+                    );
+                } else {
+                    setAttendancelist([]);
+                    setTotalPages(0);
+                    // setAttendancecount(0);
+
+                    setToastmessage(
+                        response?.message || "Unable to fetch attendance"
+                    );
+
+                    setToasttype("error");
+                    setShowtoast(true);
+                }
+            } catch (error) {
+                console.log(error);
+
+                setAttendancelist([]);
+                setToastmessage("Something went wrong");
+                setToasttype("error");
+                setShowtoast(true);
             }
         };
 
         fetchtimetablelist();
-    }, [selectedClass]);
+
+    }, [page, selectedClass, selectedDate]);
 
     const handlenext = () => {
-
-        setPage(page + 1)
-    }
+        if (page < Totalpages) {
+            setPage(page + 1);
+        }
+    };
 
     const handleprevious = () => {
         if (page > 1) {
-            setPage(page - 1)
+            setPage(page - 1);
         }
-
-    }
-
-
-
-    const getSubject = (
-        day: Day,
-        from: string,
-        to: string
-    ) => {
-        const timetable = attendancelist.find(
-            (item: any) => item.day === day
-        );
-        const period = timetable?.schedule.find(
-            (item: any) => item.time_from === from && item.time_to === to
-        );
-
-        return period?.subject ?? "NA";
     };
 
-    const handleClassChange = (value: string) => {
 
-        setSelectedClass(() => value)
-    };
 
     return (
         <div className="w-full">
@@ -175,7 +181,7 @@ const AttendanceList = () => {
                             <input
                                 type="date"
                                 value={selectedDate}
-                                onChange={(e) => setSelectedDate(e.target.value)}
+                                onChange={(e) => handleDateChange(e.target.value)}
                                 className="h-9 w-full rounded-md border border-slate-200 bg-white px-3 text-[11px] text-slate-600 outline-none focus:border-blue-500"
                             />
                             <ChevronDown
@@ -186,57 +192,91 @@ const AttendanceList = () => {
                     </div>
                 </div>
 
-                {/* Weekly Timetable */}
+                {/* Attendance */}
                 <div className="overflow-x-auto p-3">
                     <table className="w-full min-w-[850px] border-collapse text-left">
                         <thead>
                             <tr className="border-b border-slate-200 bg-sky-50">
                                 <th className="px-3 py-3 text-[10px] font-semibold text-slate-700">
-                                    Time
+                                    S.NO
+                                </th>
+                                <th className="px-3 py-3 text-[10px] font-semibold text-slate-700">
+                                    Student Name
+                                </th>
+                                <th className="px-3 py-3 text-[10px] font-semibold text-slate-700">
+                                    Roll No
+                                </th>
+                                <th className="px-3 py-3 text-[10px] font-semibold text-slate-700">
+                                    Class
+                                </th>
+                                <th className="px-3 py-3 text-[10px] font-semibold text-slate-700">
+                                    Date
+                                </th>
+                                <th className="px-3 py-3 text-[10px] font-semibold text-slate-700">
+                                    Status
                                 </th>
 
-                                {days.map((day) => (
-                                    <th
-                                        key={day}
-                                        className="px-3 py-3 text-[10px] font-semibold capitalize text-slate-700"
-                                    >
-                                        {day}
-                                    </th>
-                                ))}
                             </tr>
                         </thead>
 
-                        <tbody>
-                            {attendancelist.length > 0 ? (
-                                attendancelist.map((slot: any) =>
-                                    slot.schedule.map((slotted: any) => (
-                                        <tr
-                                            key={slotted._id}
-                                            className="border-b border-slate-100 last:border-0 hover:bg-blue-50/30"
-                                        >
-                                            <td className="whitespace-nowrap px-3 py-3 text-[10px] font-medium text-blue-500">
-                                                {formatTime(slotted.time_from)} - {formatTime(slotted.time_to)}
-                                            </td>
 
-                                            {days.map((day) => (
-                                                <td
-                                                    key={day}
-                                                    className="px-3 py-3 text-[10px] text-blue-500"
-                                                >
-                                                    {getSubject(day, slotted.time_from, slotted.time_to)}
-                                                </td>
-                                            ))}
-                                        </tr>
-                                    ))
-                                )
+                        <tbody>
+                            {attendancelist?.length > 0 ? (
+                                attendancelist.map((attend: any, index: number) => (
+                                    <tr
+                                        key={attend.student_id}
+                                        className="border-b border-slate-100 hover:bg-slate-50"
+                                    >
+                                        {/* S.NO */}
+                                        <td className="px-4 py-3 text-xs text-slate-600">
+                                            {(page - 1) * pagesize + index + 1}
+                                        </td>
+
+                                        {/* Student Name */}
+                                        <td className="px-4 py-3 text-xs text-slate-600">
+                                            {attend.student_name}
+                                        </td>
+
+                                        {/* Roll No */}
+                                        <td className="px-4 py-3 text-xs text-slate-600">
+                                            {attend.rollno}
+                                        </td>
+
+                                        {/* Class */}
+                                        <td className="px-4 py-3 text-xs text-slate-600">
+                                            {attend.class_name}
+                                        </td>
+
+                                        {/* Date */}
+                                        <td className="px-4 py-3 text-xs text-slate-600">
+                                            {attend.date}
+                                        </td>
+
+                                        {/* Status */}
+                                        <td className="px-4 py-3">
+                                            <span
+                                                className={`badge badge-sm ${attend.status === "present"
+                                                        ? "badge-success"
+                                                        : "badge-error"
+                                                    }`}
+                                            >
+                                                {attend.status}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                ))
                             ) : (
                                 <tr>
-                                    <td colSpan={7} className="py-8 text-center text-xs text-slate-400">
-                                        No timetable found for this class and section
+                                    <td
+                                        colSpan={6}
+                                        className="py-8 text-center text-xs text-slate-400"
+                                    >
+                                        No attendance records found.
                                     </td>
                                 </tr>
                             )}
                         </tbody>
+
                     </table>
                 </div>
                 <Pagination
@@ -247,6 +287,17 @@ const AttendanceList = () => {
                     next={handlenext}
                     previous={handleprevious}
                 />
+                {
+                    showtoast && (
+                        <Toaster
+
+                            toast_message={toast_message}
+                            type={toast_type}
+                            onClose={() => setShowtoast(false)}
+
+                        />
+                    )
+                }
 
             </div>
         </div>

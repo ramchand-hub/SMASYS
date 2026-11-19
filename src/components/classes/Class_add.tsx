@@ -16,7 +16,6 @@ const AddClass = () => {
   const location = useLocation();
   const [teacheroption, setTeacheroption] = useState([])
   const class_val = location.state?.class;
-  console.log(class_val,'class_val..')
   const [toast_message, setToastmessage] = useState("")
   const [showtoast, setShowtoast] = useState(false)
   const [toast_type, setToasttype] = useState<ToastType>("success")

@@ -2,8 +2,8 @@ import axios from 'axios'
 
 
 const api = axios.create({
-  baseURL: 'http://localhost:4000/smsys',
-  // baseURL: 'https://smasys-api-gateway.onrender.com/smsys',
+  // baseURL: 'http://localhost:4000/smsys',
+  baseURL: 'https://smasys-api-gateway.onrender.com/smsys',
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json, application/x-www-form-urlencoded',
@@ -36,6 +36,8 @@ api.interceptors.response.use((response) => {
 
       // Redirect to login
       window.location.href = "/Register";
+    }else if(error?.response?.status >= 500){
+        console.log("server error...")
     }
 
     return Promise.reject(error);

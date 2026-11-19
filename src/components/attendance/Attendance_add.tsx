@@ -12,6 +12,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import useclass from "../../custom_hooks/Useclass";
 import usestudent from "../../custom_hooks/Usestudents";
+import { create_attendance } from "../../Services/Allservice";
 type AttendanceStatus = "present" | "absent" | "leave" | null;
 
 interface Student {
@@ -22,8 +23,6 @@ interface Student {
     status: AttendanceStatus;
 }
 
-
-
 const getToday = () => {
     const now = new Date();
     const offset = now.getTimezoneOffset() * 60000;
@@ -32,11 +31,10 @@ const getToday = () => {
 
 const CreateAttendance = () => {
     const [selectedClass, setSelectedClass] = useState("");
-    const [selectedSection, setSelectedSection] = useState("");
     const [selectedDate, setSelectedDate] = useState(getToday());
     const [search, setSearch] = useState("");
     const [students, setStudents] = useState<Student[]>([]);
-    const [selectedStudents, setSelectedStudents] = useState<string[]>([]);
+    const [selectedStudents, setSelectedStudents] = useState<any[]>([]);
     const [page, setPage] = useState(1);
     const navigate = useNavigate()
     const { classes } = useclass();
@@ -84,25 +82,18 @@ const CreateAttendance = () => {
         );
     };
 
-    // const updateRemarks = (id: string, remarks: string) => {
-    //     setStudents((prev) =>
-    //         prev.map((student) =>
-    //             student._id === id ? { ...student, remarks } : student
-    //         )
-    //     );
-    // };
-
-    // const markAll = (status: AttendanceStatus) => {
-    //     setStudents((prev) =>
-    //         prev.map((student) => ({ ...student, status }))
-    //     );
-    // };
-
-    const toggleStudent = (id: string) => {
+    const toggleStudent = (student: any) => {
         setSelectedStudents((prev) =>
-            prev.includes(id)
-                ? prev.filter((studentId) => studentId !== id)
-                : [...prev, id]
+            prev.some((item) => item.student_id === student._id)
+                ? prev.filter((item) => item.student_id !== student._id)
+                : [
+                    ...prev,
+                    {
+                        student_id: student._id,
+                        student_name: `${student.first_name} ${student.last_name}`,
+                        rollno: student.rollno
+                    }
+                ]
         );
     };
 
@@ -117,7 +108,7 @@ const CreateAttendance = () => {
         );
     };
 
-    const handleSave = () => {
+    const handleSave = async () => {
         if (!selectedClass || !selectedDate) {
             alert("Please select class, section and date.");
             return;
@@ -140,8 +131,12 @@ const CreateAttendance = () => {
             })),
         };
 
+        const response = await create_attendance(payload)
+        if (response) {
+            navigate("/attendance")
 
-        navigate("/attendance")
+        }
+
 
     };
 
@@ -247,15 +242,7 @@ const CreateAttendance = () => {
                     />
                 </div>
 
-                <div className="flex items-end">
-                    <button
-                        type="button"
-                        className="flex h-10 w-full items-center justify-center gap-2 rounded-md bg-blue-600 px-4 text-xs font-semibold text-white transition hover:bg-blue-700"
-                    >
-                        <Search size={16} />
-                        Load Students
-                    </button>
-                </div>
+
             </div>
 
             {/* Summary Cards */}
@@ -308,25 +295,7 @@ const CreateAttendance = () => {
                         />
                     </div>
 
-                    {/* <div className="flex flex-wrap gap-2">
-                        <button
-                            type="button"
-                            onClick={() => markAll("present")}
-                            className="flex items-center gap-2 rounded-md border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-xs font-semibold text-emerald-700 hover:bg-emerald-100"
-                        >
-                            <CheckCircle2 size={16} />
-                            Mark All Present
-                        </button>
 
-                        <button
-                            type="button"
-                            onClick={() => markAll("absent")}
-                            className="flex items-center gap-2 rounded-md border border-red-200 bg-red-50 px-4 py-2.5 text-xs font-semibold text-red-600 hover:bg-red-100"
-                        >
-                            <XCircle size={16} />
-                            Mark All Absent
-                        </button>
-                    </div> */}
                 </div>
 
                 <div className="overflow-x-auto">
@@ -361,8 +330,10 @@ const CreateAttendance = () => {
                                     <td className="px-4 py-3">
                                         <input
                                             type="checkbox"
-                                            checked={selectedStudents.includes(student._id)}
-                                            onChange={() => toggleStudent(student._id)}
+                                            // checked={selectedStudents.some(
+                                            //     (item) => item.student_id === student._id
+                                            // )} 
+                                            onChange={() => toggleStudent(student)}
                                             className="checkbox checkbox-primary checkbox-xs"
                                         />
                                     </td>

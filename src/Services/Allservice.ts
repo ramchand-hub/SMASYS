@@ -194,10 +194,10 @@ export async function create_timetable(data: any): Promise<any> {
 	}
 }
 
-export async function timetableList({page, pagesize, class_id}:{
-page:number,
-pagesize:number,
-class_id?:string
+export async function timetableList({ page, pagesize, class_id }: {
+	page: number,
+	pagesize: number,
+	class_id?: string
 }): Promise<any> {
 	try {
 		const response = await api.get('/timetables/timetablesList',
@@ -205,7 +205,7 @@ class_id?:string
 				params: {
 					page,
 					pagesize,
-					      ...(class_id && {class_id }),
+					...(class_id && { class_id }),
 
 				}
 
@@ -214,6 +214,35 @@ class_id?:string
 		return response.data;
 	} catch (error) {
 		console.error("timetableList API error:", error);
+		throw error;
+	}
+}
+
+export async function create_attendance(data: any): Promise<any> {
+	try {
+		const response = await api.post('/attendance/createAttendance', data);
+		return response;
+	} catch (error) {
+		console.error("create_attendance API error:", error);
+		throw error;
+	}
+}
+
+export async function attendanceList({ page, pagesize, class_id, require_date }: { page: number, pagesize: number, class_id: string, require_date: string }): Promise<any> {
+	try {
+		const response = await api.get('/attendance/Attendancelist',
+			{
+				params: {
+					page,
+					pagesize,
+					class_id,
+					require_date
+				}
+			}
+		);
+		return response.data;
+	} catch (error) {
+		console.error("attendanceList API error:", error);
 		throw error;
 	}
 }
