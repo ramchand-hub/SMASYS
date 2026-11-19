@@ -53,7 +53,7 @@ router.post("/login", async (req: Request, res: Response) => {
       const token = jwt.sign(
         { encrypt_id },
         config?.JWT_SECRET as string,
-        { expiresIn: "15m" }
+        { expiresIn: "1h" }
       );
 
       // Generate refresh token
