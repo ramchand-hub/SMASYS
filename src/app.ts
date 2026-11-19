@@ -9,7 +9,6 @@ import helmet from "helmet"
 import logger from "./utils/messages/logger"
 import { redis_connect } from "./config/redis"
 
-
 const app = express()
 const port = 4000
 const base_url = config?.base_url;
