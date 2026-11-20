@@ -15,19 +15,7 @@ const base_url = config?.base_url;
 const client = require("prom-client")
 client.collectDefaultMetrics();
 app.use(cors())
-app.use((req, res, next) => {
-    console.log("Incoming request:", {
-        method: req.method,
-        url: req.originalUrl,
-        origin: req.headers.origin
-    });
 
-    res.on("finish", () => {
-        console.log("Response:", res.statusCode);
-    });
-
-    next();
-});
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 app.use(helmet())
